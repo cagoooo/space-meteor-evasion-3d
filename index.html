@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>3D 星際隕石大冒險 - 第一人稱駕駛體驗</title>
-  <meta name="description" content="適合國小國中學生的 3D 太空飛船第一人稱隕石躲避與星際知識問答遊戲">
+  <title>3D 星際雷霆：隕石防禦與太空探索大冒險</title>
+  <meta name="description" content="全升級版 3D 太空飛船第一人稱駕駛、雷射砲擊、曲速衝刺與星際科普寓教於樂遊戲">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #030308;
+      background-color: #020208;
       font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
       color: #fff;
     }
@@ -42,7 +42,55 @@
       z-index: 1;
     }
 
-    /* === UI OVERLAY & HUD === */
+    /* === COCKPIT GLASS & HUD === */
+    .cockpit-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      background: radial-gradient(circle at center, transparent 50%, rgba(6, 18, 38, 0.4) 80%, rgba(2, 6, 18, 0.9) 100%);
+      box-shadow: inset 0 0 120px rgba(0, 240, 255, 0.2);
+    }
+
+    /* Reticle */
+    .reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 48px;
+      height: 48px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 6;
+      transition: transform 0.05s ease-out;
+    }
+    .reticle::before, .reticle::after {
+      content: '';
+      position: absolute;
+      background: rgba(0, 240, 255, 0.9);
+      box-shadow: 0 0 10px #00f0ff;
+    }
+    .reticle::before { top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%); }
+    .reticle::after { left: 50%; top: 0; height: 100%; width: 2px; transform: translateX(-50%); }
+    
+    .reticle-circle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 30px; height: 30px;
+      border: 2px dashed rgba(0, 240, 255, 0.8);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: rotateReticle 10s linear infinite;
+    }
+    @keyframes rotateReticle {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* HUD LAYER */
     .hud-layer {
       position: absolute;
       top: 0;
@@ -54,56 +102,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: clamp(12px, 2vw, 24px);
+      padding: clamp(12px, 2.5vw, 24px);
     }
 
-    /* Cockpit Glass & Target Reticle */
-    .cockpit-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 5;
-      background: radial-gradient(circle at center, transparent 55%, rgba(10, 25, 50, 0.4) 85%, rgba(2, 6, 18, 0.85) 100%);
-      box-shadow: inset 0 0 100px rgba(0, 240, 255, 0.15);
-    }
-
-    .reticle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 40px;
-      height: 40px;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 6;
-      transition: transform 0.05s ease-out;
-    }
-    .reticle::before, .reticle::after {
-      content: '';
-      position: absolute;
-      background: rgba(0, 240, 255, 0.8);
-      box-shadow: 0 0 8px #00f0ff;
-    }
-    .reticle::before {
-      top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%);
-    }
-    .reticle::after {
-      left: 50%; top: 0; height: 100%; width: 2px; transform: translateX(-50%);
-    }
-    .reticle-circle {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 24px; height: 24px;
-      border: 2px solid rgba(0, 240, 255, 0.6);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-    }
-
-    /* Top HUD Bar */
     .top-hud {
       display: flex;
       justify-content: space-between;
@@ -113,81 +114,83 @@
     }
 
     .hud-card {
-      background: rgba(10, 20, 35, 0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      border-radius: 12px;
-      padding: 10px 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 240, 255, 0.1);
+      background: rgba(10, 22, 40, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 14px;
+      padding: 10px 18px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 240, 255, 0.12);
     }
 
     .hud-title {
-      font-size: 12px;
-      color: #7dd3fc;
-      letter-spacing: 1px;
+      font-size: 11px;
+      color: #38bdf8;
+      letter-spacing: 1.5px;
       margin-bottom: 2px;
       font-weight: 700;
+      text-transform: uppercase;
     }
 
     .hud-value {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(20px, 3.5vw, 28px);
+      font-size: clamp(20px, 3.5vw, 30px);
       font-weight: 900;
       color: #ffffff;
-      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+    }
+
+    .combo-badge {
+      display: inline-block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      color: #facc15;
+      font-weight: 900;
+      text-shadow: 0 0 10px #facc15;
+      margin-left: 6px;
     }
 
     .shield-container {
-      width: clamp(140px, 25vw, 240px);
+      width: clamp(160px, 28vw, 260px);
     }
-    .shield-bar-bg {
+    .meter-bg {
       width: 100%;
-      height: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 5px;
       overflow: hidden;
-      margin-top: 6px;
-      border: 1px solid rgba(0, 240, 255, 0.4);
+      margin-top: 5px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
     }
-    .shield-bar-fill {
+    .meter-fill-shield {
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, #00f0ff, #3b82f6);
       box-shadow: 0 0 12px #00f0ff;
       transition: width 0.2s ease-out;
     }
-
-    .boost-meter-bg {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      margin-top: 4px;
-      overflow: hidden;
-    }
-    .boost-meter-fill {
+    .meter-fill-boost {
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, #ff9900, #ff0055);
       transition: width 0.1s linear;
     }
 
-    /* Warning Alert Banner */
+    /* Warning Banner */
     .warning-banner {
       position: absolute;
-      top: 15%;
+      top: 16%;
       left: 50%;
       transform: translateX(-50%) scale(0.9);
-      background: rgba(255, 0, 85, 0.85);
+      background: rgba(255, 0, 85, 0.9);
       border: 2px solid #ff0055;
       color: #fff;
-      padding: 8px 24px;
+      padding: 10px 28px;
       border-radius: 30px;
       font-size: 16px;
       font-weight: 900;
       letter-spacing: 2px;
-      box-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
+      box-shadow: 0 0 35px rgba(255, 0, 85, 0.9);
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       pointer-events: none;
@@ -198,7 +201,7 @@
       transform: translateX(-50%) scale(1);
     }
 
-    /* Touch Controls for Mobile / Tablet */
+    /* Touch Controls */
     .mobile-controls {
       display: none;
       width: 100%;
@@ -206,41 +209,37 @@
       align-items: flex-end;
       pointer-events: none;
       z-index: 15;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
     }
     @media (pointer: coarse), (max-width: 1024px) {
-      .mobile-controls {
-        display: flex;
-      }
+      .mobile-controls { display: flex; }
     }
 
     .joystick-zone {
       width: 140px;
       height: 140px;
       background: rgba(255, 255, 255, 0.08);
-      border: 2px dashed rgba(0, 240, 255, 0.4);
+      border: 2px dashed rgba(0, 240, 255, 0.5);
       border-radius: 50%;
       position: relative;
       pointer-events: auto;
       backdrop-filter: blur(4px);
     }
     .joystick-handle {
-      width: 50px;
-      height: 50px;
-      background: radial-gradient(circle, #00f0ff, #0077ff);
+      width: 54px;
+      height: 54px;
+      background: radial-gradient(circle, #00f0ff, #0284c7);
       border-radius: 50%;
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 15px #00f0ff;
+      box-shadow: 0 0 20px #00f0ff;
       pointer-events: none;
     }
 
     .action-btn-group {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       pointer-events: auto;
     }
 
@@ -248,34 +247,37 @@
       width: 76px;
       height: 76px;
       border-radius: 50%;
-      background: rgba(255, 120, 0, 0.35);
-      border: 2px solid #ff9900;
       color: #fff;
       font-weight: 900;
-      font-size: 15px;
+      font-size: 14px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 0 20px rgba(255, 153, 0, 0.4);
+      backdrop-filter: blur(10px);
       transition: transform 0.1s, background-color 0.1s;
+      border: 2px solid;
     }
-    .btn-touch:active {
-      transform: scale(0.92);
-      background: rgba(255, 153, 0, 0.8);
+    .btn-touch-fire {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: #00f0ff;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
     }
+    .btn-touch-boost {
+      background: rgba(255, 120, 0, 0.35);
+      border-color: #ff9900;
+      box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+    }
+    .btn-touch:active { transform: scale(0.9); }
 
     /* === MODALS & OVERLAYS === */
     .modal-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(4, 8, 20, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -291,13 +293,13 @@
     }
 
     .modal-card {
-      background: rgba(13, 24, 45, 0.85);
+      background: rgba(13, 24, 48, 0.9);
       border: 2px solid rgba(0, 240, 255, 0.5);
       border-radius: 24px;
       padding: clamp(24px, 5vw, 40px);
-      max-width: 540px;
-      width: 92%;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.2);
+      max-width: 580px;
+      width: 94%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 240, 255, 0.25);
       animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     @keyframes modalPop {
@@ -307,20 +309,40 @@
 
     .game-title {
       font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-      font-size: clamp(24px, 6vw, 36px);
+      font-size: clamp(24px, 5.5vw, 36px);
       font-weight: 900;
       background: linear-gradient(135deg, #00f0ff, #a855f7, #ff0055);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
     }
 
     .subtitle {
       font-size: 15px;
       color: #94a3b8;
-      margin-bottom: 24px;
-      line-height: 1.5;
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .instructions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+    .inst-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+    .inst-card strong {
+      color: #00f0ff;
+      display: block;
+      margin-bottom: 4px;
     }
 
     .difficulty-select {
@@ -342,10 +364,10 @@
       transition: all 0.2s;
     }
     .diff-btn.active {
-      background: rgba(0, 240, 255, 0.2);
+      background: rgba(0, 240, 255, 0.25);
       border-color: #00f0ff;
       color: #00f0ff;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
     }
 
     .btn-main {
@@ -353,11 +375,11 @@
       color: #030712;
       font-size: 18px;
       font-weight: 900;
-      padding: 14px 36px;
+      padding: 14px 38px;
       border: none;
       border-radius: 40px;
       cursor: pointer;
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      box-shadow: 0 0 28px rgba(0, 240, 255, 0.6);
       transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
@@ -365,44 +387,24 @@
     }
     .btn-main:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.9);
-    }
-
-    .instructions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-      text-align: left;
-    }
-    .inst-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 13px;
-    }
-    .inst-card strong {
-      color: #00f0ff;
-      display: block;
-      margin-bottom: 4px;
+      box-shadow: 0 0 38px rgba(0, 240, 255, 0.9);
     }
 
     /* QUIZ MODAL */
     .quiz-card {
       border-color: #a855f7;
-      box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+      box-shadow: 0 0 45px rgba(168, 85, 247, 0.45);
     }
     .quiz-badge {
       display: inline-block;
-      padding: 4px 12px;
+      padding: 4px 14px;
       background: rgba(168, 85, 247, 0.2);
       border: 1px solid #a855f7;
       color: #c084fc;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .quiz-question {
       font-size: clamp(16px, 4vw, 20px);
@@ -417,7 +419,7 @@
       gap: 10px;
     }
     .quiz-opt-btn {
-      padding: 12px 16px;
+      padding: 12px 18px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
@@ -457,9 +459,7 @@
       padding-bottom: 1px;
       transition: color 0.2s;
     }
-    .site-credit__author:hover {
-      color: #38bdf8;
-    }
+    .site-credit__author:hover { color: #38bdf8; }
   </style>
 </head>
 <body>
@@ -477,20 +477,20 @@
     <!-- Top Stats Bar -->
     <div class="top-hud">
       <div class="hud-card">
-        <div class="hud-title">目前得分</div>
+        <div class="hud-title">目前得分 <span class="combo-badge" id="combo-badge"></span></div>
         <div class="hud-value" id="hud-score">00000</div>
       </div>
 
       <div class="hud-card shield-container">
-        <div class="hud-title" style="display:flex; justify-shadow:space-between;">
+        <div class="hud-title" style="display:flex; justify-content:space-between;">
           <span>飛船能量護盾</span>
           <span id="hud-shield-val">100%</span>
         </div>
-        <div class="shield-bar-bg">
-          <div class="shield-bar-fill" id="shield-bar"></div>
+        <div class="meter-bg">
+          <div class="meter-fill-shield" id="shield-bar"></div>
         </div>
-        <div class="boost-meter-bg">
-          <div class="boost-meter-fill" id="boost-meter"></div>
+        <div class="meter-bg" style="height:6px; margin-top:4px;">
+          <div class="meter-fill-boost" id="boost-meter"></div>
         </div>
       </div>
 
@@ -501,7 +501,7 @@
     </div>
 
     <!-- Alert Banner -->
-    <div class="warning-banner" id="warning-banner">⚠️ 警告：前方發現密集隕石帶！</div>
+    <div class="warning-banner" id="warning-banner">⚠️ 警告：進入密集隕石帶！</div>
 
     <!-- Mobile Touch Controls -->
     <div class="mobile-controls">
@@ -509,7 +509,10 @@
         <div class="joystick-handle" id="joystick-handle"></div>
       </div>
       <div class="action-btn-group">
-        <button class="btn-touch" id="btn-touch-boost">
+        <button class="btn-touch btn-touch-fire" id="btn-touch-fire">
+          💥<span style="font-size:11px;">發射</span>
+        </button>
+        <button class="btn-touch btn-touch-boost" id="btn-touch-boost">
           🚀<span style="font-size:11px;">衝刺</span>
         </button>
       </div>
@@ -519,28 +522,32 @@
   <!-- START SCREEN MODAL -->
   <div class="modal-overlay" id="start-modal">
     <div class="modal-card">
-      <h1 class="game-title">🚀 3D 星際隕石大冒險</h1>
-      <p class="subtitle">第一人稱飛船駕駛體驗 · 國小國中星際探索寓教於樂版</p>
+      <h1 class="game-title">🚀 3D 星際雷霆大冒險</h1>
+      <p class="subtitle">第一人稱飛船駕駛 · 隕石發射打擊 · 星際科普寓教於樂版</p>
 
       <div class="instructions-grid">
         <div class="inst-card">
-          <strong>🎮 飛船操控</strong>
-          鍵盤 `WASD` / 方向鍵，或使用手機螢幕搖桿
+          <strong>🎮 駕駛轉向</strong>
+          `WASD` / 方向鍵，或使用螢幕觸控搖桿
         </div>
         <div class="inst-card">
-          <strong>⚡ 極速衝刺</strong>
-          按下 `Space` 鍵或衝刺鈕啟動曲速飆速
+          <strong>💥 能量雷射砲</strong>
+          按下 `J` / `Z` 鍵或點擊【發射】擊碎前方隕石
         </div>
         <div class="inst-card">
-          <strong>🌌 知識晶體</strong>
-          收集紫色星際晶體，回答天文問答補滿能量！
+          <strong>⚡ 極速曲速衝刺</strong>
+          按下 `Space` 鍵或【衝刺】鈕開啟超光速飆速
+        </div>
+        <div class="inst-card">
+          <strong>🌌 星際知識晶體</strong>
+          收集發光晶體答對題目補滿護盾與能量！
         </div>
       </div>
 
       <div class="difficulty-select">
-        <button class="diff-btn active" onclick="setDifficulty('easy', this)">初階 (少兒組)</button>
-        <button class="diff-btn" onclick="setDifficulty('normal', this)">中階 (探險組)</button>
-        <button class="diff-btn" onclick="setDifficulty('hard', this)">高階 (大師組)</button>
+        <button class="diff-btn active" onclick="setDifficulty('easy', this)">初階 (太陽系)</button>
+        <button class="diff-btn" onclick="setDifficulty('normal', this)">中階 (隕石帶)</button>
+        <button class="diff-btn" onclick="setDifficulty('hard', this)">高階 (黑洞界)</button>
       </div>
 
       <button class="btn-main" onclick="startGame()">
@@ -560,12 +567,13 @@
       <h1 class="game-title" style="background: linear-gradient(135deg, #ff0055, #ff9900); -webkit-background-clip: text;">💥 任務中斷 Game Over</h1>
       <p class="subtitle" id="gameover-reason">飛船護盾歸零，遭遇隕石撞擊！</p>
 
-      <div style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1);">
-        <div style="font-size: 14px; color: #94a3b8;">最終探索得分</div>
-        <div style="font-family: 'Orbitron', sans-serif; font-size: 42px; font-weight: 900; color: #00f0ff; margin: 4px 0;" id="go-score">0</div>
-        <div style="font-size: 15px; color: #facc15; font-weight: 700; margin-top: 8px;" id="go-rank">🌟 獲得稱號：星際駕駛新兵</div>
-        <div style="font-size: 13px; color: #cbd5e1; margin-top: 10px; display:flex; justify-content:space-around;">
-          <span>避開隕石：<strong id="go-asteroids" style="color:#00f0ff">0</strong> 個</span>
+      <div style="background: rgba(0,0,0,0.35); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid rgba(0, 240, 255, 0.2);">
+        <div style="font-size: 13px; color: #94a3b8;">最終探索總分</div>
+        <div style="font-family: 'Orbitron', sans-serif; font-size: 44px; font-weight: 900; color: #00f0ff; margin: 4px 0;" id="go-score">0</div>
+        <div style="font-size: 15px; color: #facc15; font-weight: 700; margin-top: 6px;" id="go-rank">🌟 獲得稱號：星際駕駛新兵</div>
+        <div style="font-size: 13px; color: #cbd5e1; margin-top: 12px; display:flex; justify-content:space-around;">
+          <span>擊碎隕石：<strong id="go-destroyed" style="color:#00f0ff">0</strong> 個</span>
+          <span>避開隕石：<strong id="go-asteroids" style="color:#38bdf8">0</strong> 個</span>
           <span>答對問答：<strong id="go-quiz" style="color:#a855f7">0</strong> 題</span>
         </div>
       </div>
@@ -601,18 +609,20 @@
           this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         }
       }
-      playEngineSound() {
+      playLaser() {
         if (!this.ctx) return;
+        const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(40, this.ctx.currentTime);
-        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(this.ctx.currentTime + 0.5);
+        osc.stop(now + 0.15);
       }
       playExplosion() {
         if (!this.ctx) return;
@@ -620,14 +630,14 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'square';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(30, now + 0.6);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(25, now + 0.5);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(now + 0.6);
+        osc.stop(now + 0.5);
       }
       playCollect() {
         if (!this.ctx) return;
@@ -638,7 +648,7 @@
         osc.frequency.setValueAtTime(523.25, now); // C5
         osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
         osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
-        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.setValueAtTime(0.2, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -652,13 +662,13 @@
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(800, now + 0.4);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.frequency.exponentialRampToValueAtTime(750, now + 0.35);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start();
-        osc.stop(now + 0.4);
+        osc.stop(now + 0.35);
       }
       playCorrect() {
         if (!this.ctx) return;
@@ -668,7 +678,7 @@
         osc.type = 'sine';
         osc.frequency.setValueAtTime(587.33, now);
         osc.frequency.setValueAtTime(880, now + 0.12);
-        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.setValueAtTime(0.25, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -681,7 +691,7 @@
     /* === ASTRONOMY KNOWLEDGE QUIZ DATASET === */
     const QUIZ_BANK = [
       { q: "太陽系中體積最大的行星是哪一顆？", opts: ["木星", "火星", "地球", "水星"], ans: 0 },
-      { q: "哪一顆行星因為表面富含氧化鐵而呈現紅色，被稱為「紅色星球」？", opts: ["火星", "金星", "土星", "天王星"], ans: 0 },
+      { q: "哪一顆行星因為表面富含氧化鐵呈現紅色，被稱為「紅色星球」？", opts: ["火星", "金星", "土星", "天王星"], ans: 0 },
       { q: "太陽系中擁有最明顯且巨大美麗行星環系統的是？", opts: ["土星", "木星", "海王星", "金星"], ans: 0 },
       { q: "月球繞行地球公轉一圈大約需要多久時間？", opts: ["大約1個月", "大約1天", "大約1年", "大約10天"], ans: 0 },
       { q: "太陽本身是一顆什麼類型的天體？", opts: ["恒星", "行星", "衛星", "彗星"], ans: 0 },
@@ -689,13 +699,18 @@
       { q: "宇宙中引力強大到連光都無法逃脫的天體稱為？", opts: ["黑洞", "白矮星", "彗星", "流星"], ans: 0 },
       { q: "下列哪一個現象是地球自轉所產生的影響？", opts: ["晝夜交替", "四季變化", "月相盈虧", "日食現象"], ans: 0 },
       { q: "哈雷彗星大約每隔多少年會接近地球一次？", opts: ["約76年", "約10年", "約1000年", "約5年"], ans: 0 },
-      { q: "北半球指引正北方最重要的指標恒星是？", opts: ["北極星", "獵戶座", "織女星", "牛郎星"], ans: 0 }
+      { q: "北半球指引正北方最重要的指標恒星是？", opts: ["北極星", "獵戶座", "織女星", "牛郎星"], ans: 0 },
+      { q: "太陽系中自轉方向與大多數行星相反（自東向西）的是？", opts: ["金星", "地球", "火星", "木星"], ans: 0 },
+      { q: "夜空中最亮的一顆恒星（不包含行星）是哪一顆？", opts: ["天狼星", "北極星", "織女星", "參宿四"], ans: 0 },
+      { q: "九大行星中哪一顆在2006年被國際天文學聯合會重分類為「矮行星」？", opts: ["冥王星", "海王星", "天王星", "木星"], ans: 0 },
+      { q: "流星雨劃過夜空時，流星本質上是什麼天體墜入大氣層摩擦發光？", opts: ["宇宙塵埃與小隕石", "恆星碎片", "人造衛星", "太陽風暴"], ans: 0 }
     ];
 
-    /* === GAME STATE & ENGINE === */
+    /* === THREE.JS GAME ENGINE === */
     let scene, camera, renderer;
-    let stars, starGeo, starCount = 1500;
+    let stars, starGeo, starCount = 1800;
     let asteroids = [];
+    let lasers = [];
     let knowledgeOrbs = [];
     let particles = [];
     let cockpitGroup;
@@ -711,12 +726,15 @@
     let boostEnergy = 100;
     let isBoosting = false;
     let asteroidsDodgedCount = 0;
+    let asteroidsDestroyedCount = 0;
     let quizCorrectCount = 0;
+    let comboCount = 0;
+    let lastFireTime = 0;
 
     // Movement Controls
     const playerPos = { x: 0, y: 0 };
     const playerVel = { x: 0, y: 0 };
-    const keys = { w: false, a: false, s: false, d: false, boost: false };
+    const keys = { w: false, a: false, s: false, d: false, boost: false, fire: false };
     let touchJoystickDir = { x: 0, y: 0 };
 
     function setDifficulty(diff, btnEl) {
@@ -728,7 +746,7 @@
     function initThree() {
       const container = document.getElementById('game-canvas');
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x030308, 0.008);
+      scene.fog = new THREE.FogExp2(0x020208, 0.007);
 
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 0, 0);
@@ -741,41 +759,36 @@
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
       scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.2);
+      const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.3);
       dirLight.position.set(10, 20, 10);
       scene.add(dirLight);
 
-      const pointLight = new THREE.PointLight(0xff0055, 1.5, 50);
+      const pointLight = new THREE.PointLight(0xa855f7, 1.8, 60);
       pointLight.position.set(-10, -10, -20);
       scene.add(pointLight);
 
-      // Create Starfield
+      // Create Scene Elements
       createStarfield();
-
-      // Create Cockpit Frame Group
       createCockpit3D();
 
-      // Window Resize Listener
       window.addEventListener('resize', onWindowResize, false);
     }
 
     function createStarfield() {
       starGeo = new THREE.BufferGeometry();
       const positions = new Float32Array(starCount * 3);
-      const velocities = new Float32Array(starCount);
 
       for (let i = 0; i < starCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 400;
-        positions[i + 1] = (Math.random() - 0.5) * 400;
-        positions[i + 2] = -Math.random() * 400;
-        velocities[i / 3] = Math.random() * 0.5 + 0.5;
+        positions[i] = (Math.random() - 0.5) * 450;
+        positions[i + 1] = (Math.random() - 0.5) * 450;
+        positions[i + 2] = -Math.random() * 450;
       }
 
       starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       
       const starMat = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 0.8,
+        size: 0.9,
         transparent: true,
         opacity: 0.85
       });
@@ -787,17 +800,16 @@
     function createCockpit3D() {
       cockpitGroup = new THREE.Group();
       
-      // Simple futuristic cockpit side struts attached to camera
-      const strutMat = new THREE.MeshBasicMaterial({ color: 0x0a192f, wireframe: true });
+      const strutMat = new THREE.MeshBasicMaterial({ color: 0x0284c7, wireframe: true });
       
-      const leftStrutGeo = new THREE.BoxGeometry(0.2, 3, 0.2);
+      const leftStrutGeo = new THREE.BoxGeometry(0.18, 3.2, 0.18);
       const leftStrut = new THREE.Mesh(leftStrutGeo, strutMat);
-      leftStrut.position.set(-1.8, 0, -1.2);
+      leftStrut.position.set(-1.85, 0, -1.2);
       leftStrut.rotation.z = -0.3;
       cockpitGroup.add(leftStrut);
 
       const rightStrut = new THREE.Mesh(leftStrutGeo, strutMat);
-      rightStrut.position.set(1.8, 0, -1.2);
+      rightStrut.position.set(1.85, 0, -1.2);
       rightStrut.rotation.z = 0.3;
       cockpitGroup.add(rightStrut);
 
@@ -806,60 +818,80 @@
 
     /* Procedural Low-Poly Asteroid Mesh Builder */
     function createAsteroidMesh() {
-      const radius = Math.random() * 1.5 + 1.2;
+      const radius = Math.random() * 1.6 + 1.2;
       const geometry = new THREE.DodecahedronGeometry(radius, 1);
       
-      // Deform vertices to make rugged rock shape
       const posAttr = geometry.attributes.position;
       for (let i = 0; i < posAttr.count; i++) {
         const x = posAttr.getX(i);
         const y = posAttr.getY(i);
         const z = posAttr.getZ(i);
-        const offset = (Math.random() - 0.5) * 0.4;
+        const offset = (Math.random() - 0.5) * 0.45;
         posAttr.setXYZ(i, x + offset, y + offset, z + offset);
       }
       geometry.computeVertexNormals();
 
-      const colors = [0x64748b, 0x475569, 0x334155, 0x78716c];
+      const colors = [0x64748b, 0x475569, 0x334155, 0x78716c, 0x52525b];
       const color = colors[Math.floor(Math.random() * colors.length)];
       
       const material = new THREE.MeshStandardMaterial({
         color: color,
-        roughness: 0.9,
-        metalness: 0.2,
+        roughness: 0.85,
+        metalness: 0.25,
         flatShading: true
       });
 
       const mesh = new THREE.Mesh(geometry, material);
       mesh.rotationSpeed = {
-        x: (Math.random() - 0.5) * 0.03,
-        y: (Math.random() - 0.5) * 0.03,
-        z: (Math.random() - 0.5) * 0.03
+        x: (Math.random() - 0.5) * 0.04,
+        y: (Math.random() - 0.5) * 0.04,
+        z: (Math.random() - 0.5) * 0.04
       };
       mesh.radius = radius;
       return mesh;
     }
 
-    /* Knowledge Orb (Power-up Quiz Crystal) */
+    /* Knowledge Orb */
     function createKnowledgeOrb() {
-      const geo = new THREE.OctahedronGeometry(1.2, 0);
+      const geo = new THREE.OctahedronGeometry(1.3, 0);
       const mat = new THREE.MeshPhongMaterial({
         color: 0xa855f7,
-        emissive: 0x7e22ce,
+        emissive: 0x9333ea,
         shininess: 100,
         flatShading: true,
         transparent: true,
-        opacity: 0.9
+        opacity: 0.95
       });
       const orb = new THREE.Mesh(geo, mat);
-      orb.rotationSpeed = 0.04;
+      orb.rotationSpeed = 0.045;
       return orb;
     }
 
-    /* Particle Explosions */
-    function createExplosion(x, y, z) {
+    /* Laser Bolt */
+    function fireLaser() {
+      const now = performance.now();
+      if (now - lastFireTime < 180) return; // cooldown
+      lastFireTime = now;
+
+      sfx.playLaser();
+
+      const geo = new THREE.CylinderGeometry(0.1, 0.1, 2.5, 6);
+      geo.rotateX(Math.PI / 2);
+      const mat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+      const laser = new THREE.Mesh(geo, mat);
+
+      laser.position.x = playerPos.x;
+      laser.position.y = playerPos.y - 0.4;
+      laser.position.z = -1.5;
+
+      scene.add(laser);
+      lasers.push(laser);
+    }
+
+    /* Explosions */
+    function createExplosion(x, y, z, colorHex = 0xff5500) {
       sfx.playExplosion();
-      const count = 35;
+      const count = 40;
       const pGeo = new THREE.BufferGeometry();
       const positions = new Float32Array(count * 3);
       const pVels = [];
@@ -869,17 +901,17 @@
         positions[i * 3 + 1] = y;
         positions[i * 3 + 2] = z;
         pVels.push({
-          x: (Math.random() - 0.5) * 1.2,
-          y: (Math.random() - 0.5) * 1.2,
-          z: (Math.random() - 0.5) * 1.2,
+          x: (Math.random() - 0.5) * 1.4,
+          y: (Math.random() - 0.5) * 1.4,
+          z: (Math.random() - 0.5) * 1.4,
           life: 1.0
         });
       }
 
       pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       const pMat = new THREE.PointsMaterial({
-        color: 0xff5500,
-        size: 1.5,
+        color: colorHex,
+        size: 1.6,
         transparent: true,
         opacity: 1
       });
@@ -890,20 +922,20 @@
       particles.push(pSystem);
     }
 
-    /* Spawning Logic */
+    /* Spawning */
     function spawnAsteroid() {
       const mesh = createAsteroidMesh();
-      mesh.position.x = (Math.random() - 0.5) * 35;
-      mesh.position.y = (Math.random() - 0.5) * 25;
-      mesh.position.z = -180 - Math.random() * 40;
+      mesh.position.x = (Math.random() - 0.5) * 38;
+      mesh.position.y = (Math.random() - 0.5) * 26;
+      mesh.position.z = -190 - Math.random() * 40;
       scene.add(mesh);
       asteroids.push(mesh);
     }
 
     function spawnKnowledgeOrb() {
       const orb = createKnowledgeOrb();
-      orb.position.x = (Math.random() - 0.5) * 20;
-      orb.position.y = (Math.random() - 0.5) * 15;
+      orb.position.x = (Math.random() - 0.5) * 22;
+      orb.position.y = (Math.random() - 0.5) * 16;
       orb.position.z = -200;
       scene.add(orb);
       knowledgeOrbs.push(orb);
@@ -911,7 +943,6 @@
 
     /* INPUT HANDLERS */
     function setupControls() {
-      // Keyboard
       window.addEventListener('keydown', (e) => {
         if (!gameActive || isPausedForQuiz) return;
         sfx.init();
@@ -919,9 +950,8 @@
         if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.s = true;
         if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.a = true;
         if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.d = true;
-        if (e.key === ' ' || e.key === 'Shift') {
-          keys.boost = true;
-        }
+        if (e.key === ' ' || e.key === 'Shift') keys.boost = true;
+        if (e.key === 'j' || e.key === 'J' || e.key === 'z' || e.key === 'Z') fireLaser();
       });
 
       window.addEventListener('keyup', (e) => {
@@ -935,7 +965,6 @@
       // Mobile Touch Joystick
       const zone = document.getElementById('joystick-zone');
       const handle = document.getElementById('joystick-handle');
-
       let touchId = null;
       let center = { x: 0, y: 0 };
 
@@ -977,12 +1006,17 @@
         const hy = Math.sin(angle) * dist;
         
         handle.style.transform = `translate(calc(-50% + ${hx}px), calc(-50% + ${hy}px))`;
-        
         touchJoystickDir.x = hx / 50;
         touchJoystickDir.y = hy / 50;
       }
 
-      // Boost Touch Button
+      // Touch Buttons
+      document.getElementById('btn-touch-fire').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        sfx.init();
+        fireLaser();
+      });
+
       const btnBoost = document.getElementById('btn-touch-boost');
       btnBoost.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -1001,6 +1035,7 @@
 
       if (gameActive && !isPausedForQuiz) {
         updatePlayerMovement(delta);
+        updateLasers(delta);
         updateAsteroids(delta);
         updateKnowledgeOrbs(delta);
         updateParticles(delta);
@@ -1016,35 +1051,29 @@
       let moveX = 0;
       let moveY = 0;
 
-      // Keyboard input
       if (keys.a) moveX -= 1;
       if (keys.d) moveX += 1;
-      if (keys.w) moveY += 1; // Pitch down / fly up
-      if (keys.s) moveY -= 1; // Pitch up / fly down
+      if (keys.w) moveY += 1;
+      if (keys.s) moveY -= 1;
 
-      // Combine with touch joystick
       moveX += touchJoystickDir.x;
       moveY -= touchJoystickDir.y;
 
       playerVel.x += moveX * speedFactor * delta;
       playerVel.y += moveY * speedFactor * delta;
 
-      // Drag
       playerVel.x *= 0.9;
       playerVel.y *= 0.9;
 
       playerPos.x += playerVel.x;
       playerPos.y += playerVel.y;
 
-      // Boundaries
-      playerPos.x = Math.max(-14, Math.min(14, playerPos.x));
-      playerPos.y = Math.max(-9, Math.min(9, playerPos.y));
+      playerPos.x = Math.max(-15, Math.min(15, playerPos.x));
+      playerPos.y = Math.max(-10, Math.min(10, playerPos.y));
 
-      // Camera position & cockpit sway
       camera.position.x = playerPos.x;
       camera.position.y = playerPos.y;
       
-      // Roll tilt simulation
       camera.rotation.z = -playerVel.x * 0.08;
       camera.rotation.x = playerVel.y * 0.05;
 
@@ -1055,7 +1084,6 @@
         cockpitGroup.rotation.x = camera.rotation.x;
       }
 
-      // Boost check
       isBoosting = keys.boost && boostEnergy > 5;
       if (isBoosting) {
         boostEnergy = Math.max(0, boostEnergy - 35 * delta);
@@ -1068,15 +1096,46 @@
       camera.updateProjectionMatrix();
     }
 
+    function updateLasers(delta) {
+      const laserSpeed = 160;
+      for (let i = lasers.length - 1; i >= 0; i--) {
+        const laser = lasers[i];
+        laser.position.z -= laserSpeed * delta;
+
+        // Check collision with asteroids
+        let hit = false;
+        for (let j = asteroids.length - 1; j >= 0; j--) {
+          const ast = asteroids[j];
+          const dist = Math.hypot(laser.position.x - ast.position.x, laser.position.y - ast.position.y);
+          if (Math.abs(laser.position.z - ast.position.z) < 2.5 && dist < (ast.radius + 0.4)) {
+            createExplosion(ast.position.x, ast.position.y, ast.position.z, 0x00f0ff);
+            scene.remove(ast);
+            asteroids.splice(j, 1);
+            hit = true;
+
+            asteroidsDestroyedCount++;
+            comboCount++;
+            score += 150 * (1 + Math.floor(comboCount / 5));
+            showWarningBanner(`🎯 擊碎隕石！連擊 x${comboCount}`);
+            break;
+          }
+        }
+
+        if (hit || laser.position.z < -220) {
+          scene.remove(laser);
+          lasers.splice(i, 1);
+        }
+      }
+    }
+
     function updateAsteroids(delta) {
-      const baseSpeed = currentDifficulty === 'easy' ? 40 : (currentDifficulty === 'normal' ? 60 : 85);
+      const baseSpeed = currentDifficulty === 'easy' ? 42 : (currentDifficulty === 'normal' ? 65 : 90);
       const currentSpeed = isBoosting ? baseSpeed * 2.2 : baseSpeed;
 
       distance += Math.round(currentSpeed * delta * 0.2);
       score += Math.round((isBoosting ? 25 : 10) * delta * 10);
 
-      // Spawn rate based on difficulty
-      const spawnChance = currentDifficulty === 'easy' ? 0.04 : (currentDifficulty === 'normal' ? 0.07 : 0.11);
+      const spawnChance = currentDifficulty === 'easy' ? 0.045 : (currentDifficulty === 'normal' ? 0.08 : 0.12);
       if (Math.random() < spawnChance) {
         spawnAsteroid();
       }
@@ -1088,23 +1147,22 @@
         ast.rotation.x += ast.rotationSpeed.x;
         ast.rotation.y += ast.rotationSpeed.y;
 
-        // Collision Check with Ship
         const distToShip = Math.hypot(ast.position.x - playerPos.x, ast.position.y - playerPos.y);
         if (ast.position.z > -2.5 && ast.position.z < 2.5 && distToShip < (ast.radius + 0.8)) {
-          createExplosion(ast.position.x, ast.position.y, ast.position.z);
+          createExplosion(ast.position.x, ast.position.y, ast.position.z, 0xff0055);
           scene.remove(ast);
           asteroids.splice(i, 1);
 
+          comboCount = 0; // reset combo
           if (!isBoosting) {
             shield -= 25;
             if (shield <= 0) {
-              triggerGameOver("飛船受創嚴重，護盾崩潰！");
+              triggerGameOver("飛船受創過重，護盾歸零！");
             }
           }
           continue;
         }
 
-        // Passed Ship Safely
         if (ast.position.z > 10) {
           scene.remove(ast);
           asteroids.splice(i, 1);
@@ -1112,7 +1170,6 @@
         }
       }
 
-      // Random Knowledge Orb spawn
       if (Math.random() < 0.005) {
         spawnKnowledgeOrb();
       }
@@ -1170,11 +1227,11 @@
 
     function updateStars(delta) {
       const pos = starGeo.attributes.position;
-      const speed = isBoosting ? 180 : 40;
+      const speed = isBoosting ? 190 : 45;
       for (let i = 0; i < starCount; i++) {
         let z = pos.getZ(i);
         z += speed * delta;
-        if (z > 10) z = -400;
+        if (z > 10) z = -450;
         pos.setZ(i, z);
       }
       pos.needsUpdate = true;
@@ -1186,6 +1243,9 @@
       document.getElementById('hud-shield-val').innerText = `${Math.max(0, Math.round(shield))}%`;
       document.getElementById('shield-bar').style.width = `${Math.max(0, shield)}%`;
       document.getElementById('boost-meter').style.width = `${Math.max(0, boostEnergy)}%`;
+      
+      const comboEl = document.getElementById('combo-badge');
+      comboEl.innerText = comboCount > 1 ? `x${comboCount} COMBO!` : '';
     }
 
     /* QUIZ SYSTEM */
@@ -1217,10 +1277,10 @@
       if (isCorrect) {
         sfx.playCorrect();
         quizCorrectCount++;
-        score += 500;
-        shield = Math.min(100, shield + 35);
+        score += 600;
+        shield = Math.min(100, shield + 40);
         boostEnergy = 100;
-        showWarningBanner("✨ 答對了！獲得星際能量加成！");
+        showWarningBanner("✨ 答對了！獲得強效星際護盾！");
       } else {
         showWarningBanner("❌ 答案有誤！繼續保持警惕！");
       }
@@ -1247,17 +1307,20 @@
       shield = 100;
       boostEnergy = 100;
       asteroidsDodgedCount = 0;
+      asteroidsDestroyedCount = 0;
       quizCorrectCount = 0;
+      comboCount = 0;
       playerPos.x = 0;
       playerPos.y = 0;
       playerVel.x = 0;
       playerVel.y = 0;
 
-      // Clear existing meshes
       asteroids.forEach(a => scene.remove(a));
+      lasers.forEach(l => scene.remove(l));
       knowledgeOrbs.forEach(k => scene.remove(k));
       particles.forEach(p => scene.remove(p));
       asteroids = [];
+      lasers = [];
       knowledgeOrbs = [];
       particles = [];
     }
@@ -1267,13 +1330,14 @@
       document.getElementById('gameover-modal').classList.remove('hidden');
       document.getElementById('gameover-reason').innerText = reason;
       document.getElementById('go-score').innerText = score;
+      document.getElementById('go-destroyed').innerText = asteroidsDestroyedCount;
       document.getElementById('go-asteroids').innerText = asteroidsDodgedCount;
       document.getElementById('go-quiz').innerText = quizCorrectCount;
 
       let rank = "🌟 星際實習飛行員";
-      if (score > 3000) rank = "🚀 太空資深駕駛員";
-      if (score > 8000) rank = "🌌 宇宙探險隊長";
-      if (score > 15000) rank = "👑 星際科普學霸大師";
+      if (score > 4000) rank = "🚀 太空資深戰術員";
+      if (score > 9000) rank = "🌌 宇宙雷霆艦長";
+      if (score > 18000) rank = "👑 星際銀河大師學霸";
       document.getElementById('go-rank').innerText = `獲得稱號：${rank}`;
     }
 
@@ -1289,7 +1353,6 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    // Initialize Game on Load
     window.addEventListener('load', () => {
       initThree();
       setupControls();
