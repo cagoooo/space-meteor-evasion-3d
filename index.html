@@ -804,7 +804,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.13";
+    const APP_VERSION = "2026.07.27.18";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -863,6 +863,7 @@
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION, { updateViaCache: 'none' })
             .then(reg => {
+              reg.update().catch(() => {}); // 主動向 CDN 比對是否有新版 sw.js
               if (reg.waiting) { _showSwUpdateToast(reg.waiting); }
               const _watchWorker = (worker) => {
                 worker.addEventListener('statechange', () => {
