@@ -536,6 +536,75 @@
       text-shadow: 0 0 12px rgba(250, 204, 21, 0.5);
     }
 
+    /* P1-1: 班級排行榜與稱號存檔 CSS */
+    .leaderboard-box {
+      background: rgba(10, 22, 40, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: left;
+      box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.1);
+    }
+    .leaderboard-title {
+      font-size: 14px;
+      color: #facc15;
+      font-weight: 900;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .lb-row {
+      display: grid;
+      grid-template-columns: 32px 1fr 90px 120px;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .lb-row.top1 { background: rgba(250, 204, 21, 0.18); border: 1px solid rgba(250, 204, 21, 0.6); }
+    .lb-row.top2 { background: rgba(226, 232, 240, 0.12); border: 1px solid rgba(226, 232, 240, 0.4); }
+    .lb-row.top3 { background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.4); }
+
+    .save-score-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .player-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      outline: none;
+    }
+    .player-input:focus { border-color: #00f0ff; box-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
+
+    .btn-save-score {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #fff;
+      font-weight: 900;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: transform 0.2s;
+      white-space: nowrap;
+    }
+    .btn-save-score:hover { transform: scale(1.05); }
+
     .site-credit {
       position: absolute;
       bottom: 10px;
@@ -657,6 +726,13 @@
         <button class="diff-btn" onclick="setDifficulty('hard', this)">高階 (黑洞界)</button>
       </div>
 
+      <div class="leaderboard-box">
+        <div class="leaderboard-title">
+          <span>🏆 班級星際英雄排行榜 (TOP 5)</span>
+        </div>
+        <div class="leaderboard-list" id="leaderboard-start-list"></div>
+      </div>
+
       <button class="btn-main" onclick="startGame()">
         <span>啟動引擎 · 出發冒險</span> 🚀
       </button>
@@ -682,6 +758,19 @@
           <span>擊碎隕石：<strong id="go-destroyed" style="color:#00f0ff">0</strong> 個</span>
           <span>避開隕石：<strong id="go-asteroids" style="color:#38bdf8">0</strong> 個</span>
           <span>答對問答：<strong id="go-quiz" style="color:#a855f7">0</strong> 題</span>
+        </div>
+      </div>
+
+      <div class="leaderboard-box">
+        <div class="leaderboard-title">
+          <span>🏆 星際班級榮譽榜 (TOP 5)</span>
+          <span style="font-size:12px; color:#94a3b8;">即時登錄</span>
+        </div>
+        <div class="leaderboard-list" id="leaderboard-go-list"></div>
+
+        <div class="save-score-form">
+          <input type="text" id="player-name-input" class="player-input" placeholder="請輸入姓名/座號 (例如: 501阿凱)" maxlength="10">
+          <button class="btn-save-score" id="btn-save-score" onclick="saveCurrentScore()">💾 登錄榜單</button>
         </div>
       </div>
 
@@ -1513,9 +1602,43 @@
       particles.push(pSystem);
     }
 
+    /* P0-1: 3D 隕石爆破實體碎塊飛散 (Mesh Shatter Physics) */
+    function createShatterDebris(x, y, z, colorHex = 0xff5500) {
+      const shardCount = 5;
+      for (let i = 0; i < shardCount; i++) {
+        const radius = Math.random() * 0.35 + 0.25;
+        const geo = new THREE.DodecahedronGeometry(radius, 0);
+        const mat = new THREE.MeshPhongMaterial({
+          color: colorHex,
+          emissive: colorHex,
+          emissiveIntensity: 0.6,
+          flatShading: true,
+          transparent: true,
+          opacity: 1.0
+        });
+        const shard = new THREE.Mesh(geo, mat);
+        shard.position.set(x, y, z);
+
+        shard.userData = {
+          isShard: true,
+          vx: (Math.random() - 0.5) * 22.0,
+          vy: (Math.random() - 0.5) * 22.0,
+          vz: (Math.random() - 0.5) * 22.0,
+          rx: (Math.random() - 0.5) * 0.2,
+          ry: (Math.random() - 0.5) * 0.2,
+          life: 0.9
+        };
+
+        scene.add(shard);
+        particles.push(shard);
+      }
+    }
+
     function createExplosion(x, y, z, colorHex = 0xff5500) {
       sfx.playExplosion();
-      const count = 50;
+      createShatterDebris(x, y, z, colorHex); // P0-1: 實體 3D 隕石爆破碎塊飛散
+
+      const count = 40;
       const pGeo = new THREE.BufferGeometry();
       const positions = new Float32Array(count * 3);
       const pVels = [];
@@ -1944,27 +2067,48 @@
 
     function updateParticles(delta) {
       for (let i = particles.length - 1; i >= 0; i--) {
-        const pSystem = particles[i];
-        const posAttr = pSystem.geometry.attributes.position;
-        const vels = pSystem.userData.vels;
-        let allDead = true;
+        const item = particles[i];
 
-        for (let j = 0; j < vels.length; j++) {
-          const v = vels[j];
-          if (v.life > 0) {
-            allDead = false;
-            v.life -= delta * 2;
-            posAttr.setX(j, posAttr.getX(j) + v.x);
-            posAttr.setY(j, posAttr.getY(j) + v.y);
-            posAttr.setZ(j, posAttr.getZ(j) + v.z);
+        if (item.userData && item.userData.isShard) {
+          // P0-1 3D 隕石碎塊物理位移與旋轉
+          const u = item.userData;
+          u.life -= delta * 1.4;
+          item.position.x += u.vx * delta;
+          item.position.y += u.vy * delta;
+          item.position.z += u.vz * delta;
+          item.rotation.x += u.rx;
+          item.rotation.y += u.ry;
+          item.scale.multiplyScalar(0.97);
+          item.material.opacity = Math.max(0, u.life);
+
+          if (u.life <= 0) {
+            scene.remove(item);
+            particles.splice(i, 1);
           }
-        }
-        posAttr.needsUpdate = true;
-        pSystem.material.opacity = Math.max(0, vels[0].life);
+        } else if (item.userData && item.userData.vels) {
+          // 點雲粒子
+          const pSystem = item;
+          const posAttr = pSystem.geometry.attributes.position;
+          const vels = pSystem.userData.vels;
+          let allDead = true;
 
-        if (allDead) {
-          scene.remove(pSystem);
-          particles.splice(i, 1);
+          for (let j = 0; j < vels.length; j++) {
+            const v = vels[j];
+            if (v.life > 0) {
+              allDead = false;
+              v.life -= delta * 2;
+              posAttr.setX(j, posAttr.getX(j) + v.x);
+              posAttr.setY(j, posAttr.getY(j) + v.y);
+              posAttr.setZ(j, posAttr.getZ(j) + v.z);
+            }
+          }
+          posAttr.needsUpdate = true;
+          pSystem.material.opacity = Math.max(0, vels[0].life);
+
+          if (allDead) {
+            scene.remove(pSystem);
+            particles.splice(i, 1);
+          }
         }
       }
     }
@@ -2148,6 +2292,80 @@
       spawnKnowledgeOrb(-20);
     }
 
+    /* P1-1: 班級排行榜與稱號存檔 (LEADERBOARD SYSTEM) */
+    const LEADERBOARD_KEY = 'space_thunder_leaderboard_v1';
+
+    function getLeaderboardData() {
+      try {
+        const raw = localStorage.getItem(LEADERBOARD_KEY);
+        return raw ? JSON.parse(raw) : [
+          { name: "阿凱艦長", score: 12800, rankTitle: "👑 星際銀河大師學霸", dist: "42.5 km", date: "2026/07/27" },
+          { name: "星際領航員", score: 8500, rankTitle: "🌌 宇宙雷霆艦長", dist: "28.1 km", date: "2026/07/27" },
+          { name: "太空先鋒", score: 4200, rankTitle: "🚀 太空資深戰術員", dist: "15.4 km", date: "2026/07/27" }
+        ];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function renderLeaderboard() {
+      const data = getLeaderboardData();
+      const containerStart = document.getElementById('leaderboard-start-list');
+      const containerGO = document.getElementById('leaderboard-go-list');
+
+      const buildHtml = (list) => {
+        if (!list || list.length === 0) return '<div style="font-size:12px; color:#94a3b8; text-align:center;">尚無探險紀錄</div>';
+        return list.map((item, idx) => {
+          let badgeClass = idx === 0 ? 'top1' : (idx === 1 ? 'top2' : (idx === 2 ? 'top3' : ''));
+          let icon = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `${idx + 1}️⃣`));
+          return `
+            <div class="lb-row ${badgeClass}">
+              <span>${icon}</span>
+              <strong style="color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.name}</strong>
+              <span style="color:#00f0ff; font-weight:900; font-family:'Orbitron', sans-serif;">${item.score}</span>
+              <span style="font-size:11px; color:#facc15; text-align:right;">${item.rankTitle.replace(/^[^\s]+\s/, '')}</span>
+            </div>
+          `;
+        }).join('');
+      };
+
+      const htmlContent = buildHtml(data);
+      if (containerStart) containerStart.innerHTML = htmlContent;
+      if (containerGO) containerGO.innerHTML = htmlContent;
+    }
+
+    function saveCurrentScore() {
+      const input = document.getElementById('player-name-input');
+      const btn = document.getElementById('btn-save-score');
+      const name = input ? (input.value.trim() || '無名艦長') : '無名艦長';
+
+      let rankTitle = "🌟 星際實習飛行員";
+      if (score > 4000) rankTitle = "🚀 太空資深戰術員";
+      if (score > 9000) rankTitle = "🌌 宇宙雷霆艦長";
+      if (score > 18000) rankTitle = "👑 星際銀河大師學霸";
+
+      const newItem = {
+        name: name,
+        score: score,
+        rankTitle: rankTitle,
+        dist: `${(distance / 10).toFixed(1)} km`,
+        date: new Date().toLocaleDateString('zh-TW')
+      };
+
+      let list = getLeaderboardData();
+      list.push(newItem);
+      list.sort((a, b) => b.score - a.score);
+      list = list.slice(0, 5);
+
+      try {
+        localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(list));
+        showWarningBanner(`🏆 成功登錄排行榜！【${name}】榮獲全校第 ${list.findIndex(x => x.score === newItem.score && x.name === newItem.name) + 1} 名！`);
+        renderLeaderboard();
+        if (input) input.disabled = true;
+        if (btn) { btn.disabled = true; btn.innerText = '✅ 已成功登錄'; }
+      } catch (e) {}
+    }
+
     function triggerGameOver(reason) {
       gameActive = false;
       document.getElementById('gameover-modal').classList.remove('hidden');
@@ -2162,6 +2380,13 @@
       if (score > 9000) rank = "🌌 宇宙雷霆艦長";
       if (score > 18000) rank = "👑 星際銀河大師學霸";
       document.getElementById('go-rank').innerText = `獲得稱號：${rank}`;
+
+      const input = document.getElementById('player-name-input');
+      const btn = document.getElementById('btn-save-score');
+      if (input) { input.disabled = false; input.value = ''; }
+      if (btn) { btn.disabled = false; btn.innerText = '💾 登錄榜單'; }
+
+      renderLeaderboard();
     }
 
     function restartGame() {
@@ -2179,6 +2404,7 @@
     window.addEventListener('load', () => {
       initThree();
       setupControls();
+      renderLeaderboard();
       requestAnimationFrame(gameLoop);
     });
   </script>
