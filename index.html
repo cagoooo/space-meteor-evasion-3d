@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>3D 星際隕石大冒險 - 第一人稱駕駛體驗</title>
+  <meta name="description" content="適合國小國中學生的 3D 太空飛船第一人稱隕石躲避與星際知識問答遊戲">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+      touch-action: manipulation;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #030308;
+      font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+      color: #fff;
+    }
+
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* === UI OVERLAY & HUD === */
+    .hud-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(12px, 2vw, 24px);
+    }
+
+    /* Cockpit Glass & Target Reticle */
+    .cockpit-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      background: radial-gradient(circle at center, transparent 55%, rgba(10, 25, 50, 0.4) 85%, rgba(2, 6, 18, 0.85) 100%);
+      box-shadow: inset 0 0 100px rgba(0, 240, 255, 0.15);
+    }
+
+    .reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 6;
+      transition: transform 0.05s ease-out;
+    }
+    .reticle::before, .reticle::after {
+      content: '';
+      position: absolute;
+      background: rgba(0, 240, 255, 0.8);
+      box-shadow: 0 0 8px #00f0ff;
+    }
+    .reticle::before {
+      top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%);
+    }
+    .reticle::after {
+      left: 50%; top: 0; height: 100%; width: 2px; transform: translateX(-50%);
+    }
+    .reticle-circle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 24px; height: 24px;
+      border: 2px solid rgba(0, 240, 255, 0.6);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+    }
+
+    /* Top HUD Bar */
+    .top-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .hud-card {
+      background: rgba(10, 20, 35, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 12px;
+      padding: 10px 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 240, 255, 0.1);
+    }
+
+    .hud-title {
+      font-size: 12px;
+      color: #7dd3fc;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+
+    .hud-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(20px, 3.5vw, 28px);
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+
+    .shield-container {
+      width: clamp(140px, 25vw, 240px);
+    }
+    .shield-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 6px;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+    }
+    .shield-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00f0ff, #3b82f6);
+      box-shadow: 0 0 12px #00f0ff;
+      transition: width 0.2s ease-out;
+    }
+
+    .boost-meter-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .boost-meter-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff9900, #ff0055);
+      transition: width 0.1s linear;
+    }
+
+    /* Warning Alert Banner */
+    .warning-banner {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: rgba(255, 0, 85, 0.85);
+      border: 2px solid #ff0055;
+      color: #fff;
+      padding: 8px 24px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      z-index: 20;
+    }
+    .warning-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* Touch Controls for Mobile / Tablet */
+    .mobile-controls {
+      display: none;
+      width: 100%;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+      z-index: 15;
+      padding-bottom: 10px;
+    }
+    @media (pointer: coarse), (max-width: 1024px) {
+      .mobile-controls {
+        display: flex;
+      }
+    }
+
+    .joystick-zone {
+      width: 140px;
+      height: 140px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px dashed rgba(0, 240, 255, 0.4);
+      border-radius: 50%;
+      position: relative;
+      pointer-events: auto;
+      backdrop-filter: blur(4px);
+    }
+    .joystick-handle {
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, #00f0ff, #0077ff);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 15px #00f0ff;
+      pointer-events: none;
+    }
+
+    .action-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .btn-touch {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: rgba(255, 120, 0, 0.35);
+      border: 2px solid #ff9900;
+      color: #fff;
+      font-weight: 900;
+      font-size: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(255, 153, 0, 0.4);
+      transition: transform 0.1s, background-color 0.1s;
+    }
+    .btn-touch:active {
+      transform: scale(0.92);
+      background: rgba(255, 153, 0, 0.8);
+    }
+
+    /* === MODALS & OVERLAYS === */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 8, 20, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .modal-card {
+      background: rgba(13, 24, 45, 0.85);
+      border: 2px solid rgba(0, 240, 255, 0.5);
+      border-radius: 24px;
+      padding: clamp(24px, 5vw, 40px);
+      max-width: 540px;
+      width: 92%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.2);
+      animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes modalPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .game-title {
+      font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+      font-size: clamp(24px, 6vw, 36px);
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #a855f7, #ff0055);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .difficulty-select {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .diff-btn {
+      flex: 1;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      color: #cbd5e1;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .diff-btn.active {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: #00f0ff;
+      color: #00f0ff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, #00f0ff, #3b82f6);
+      color: #030712;
+      font-size: 18px;
+      font-weight: 900;
+      padding: 14px 36px;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-main:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.9);
+    }
+
+    .instructions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .inst-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .inst-card strong {
+      color: #00f0ff;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* QUIZ MODAL */
+    .quiz-card {
+      border-color: #a855f7;
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+    }
+    .quiz-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid #a855f7;
+      color: #c084fc;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .quiz-question {
+      font-size: clamp(16px, 4vw, 20px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .quiz-opt-btn {
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .quiz-opt-btn:hover {
+      background: rgba(168, 85, 247, 0.3);
+      border-color: #a855f7;
+    }
+
+    /* FOOTER */
+    .site-credit {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.65);
+      z-index: 110;
+      white-space: nowrap;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+    .site-credit__heart {
+      display: inline-block;
+      margin: 0 2px;
+      filter: saturate(1.2);
+    }
+    .site-credit__author {
+      color: #00f0ff;
+      text-decoration: none;
+      border-bottom: 1px dotted currentColor;
+      padding-bottom: 1px;
+      transition: color 0.2s;
+    }
+    .site-credit__author:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Three.js Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Cockpit Overlay HUD -->
+  <div class="cockpit-overlay"></div>
+  <div class="reticle" id="reticle">
+    <div class="reticle-circle"></div>
+  </div>
+
+  <div class="hud-layer" id="hud-layer">
+    <!-- Top Stats Bar -->
+    <div class="top-hud">
+      <div class="hud-card">
+        <div class="hud-title">目前得分</div>
+        <div class="hud-value" id="hud-score">00000</div>
+      </div>
+
+      <div class="hud-card shield-container">
+        <div class="hud-title" style="display:flex; justify-shadow:space-between;">
+          <span>飛船能量護盾</span>
+          <span id="hud-shield-val">100%</span>
+        </div>
+        <div class="shield-bar-bg">
+          <div class="shield-bar-fill" id="shield-bar"></div>
+        </div>
+        <div class="boost-meter-bg">
+          <div class="boost-meter-fill" id="boost-meter"></div>
+        </div>
+      </div>
+
+      <div class="hud-card">
+        <div class="hud-title">飛行距離</div>
+        <div class="hud-value" id="hud-dist">0 km</div>
+      </div>
+    </div>
+
+    <!-- Alert Banner -->
+    <div class="warning-banner" id="warning-banner">⚠️ 警告：前方發現密集隕石帶！</div>
+
+    <!-- Mobile Touch Controls -->
+    <div class="mobile-controls">
+      <div class="joystick-zone" id="joystick-zone">
+        <div class="joystick-handle" id="joystick-handle"></div>
+      </div>
+      <div class="action-btn-group">
+        <button class="btn-touch" id="btn-touch-boost">
+          🚀<span style="font-size:11px;">衝刺</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- START SCREEN MODAL -->
+  <div class="modal-overlay" id="start-modal">
+    <div class="modal-card">
+      <h1 class="game-title">🚀 3D 星際隕石大冒險</h1>
+      <p class="subtitle">第一人稱飛船駕駛體驗 · 國小國中星際探索寓教於樂版</p>
+
+      <div class="instructions-grid">
+        <div class="inst-card">
+          <strong>🎮 飛船操控</strong>
+          鍵盤 `WASD` / 方向鍵，或使用手機螢幕搖桿
+        </div>
+        <div class="inst-card">
+          <strong>⚡ 極速衝刺</strong>
+          按下 `Space` 鍵或衝刺鈕啟動曲速飆速
+        </div>
+        <div class="inst-card">
+          <strong>🌌 知識晶體</strong>
+          收集紫色星際晶體，回答天文問答補滿能量！
+        </div>
+      </div>
+
+      <div class="difficulty-select">
+        <button class="diff-btn active" onclick="setDifficulty('easy', this)">初階 (少兒組)</button>
+        <button class="diff-btn" onclick="setDifficulty('normal', this)">中階 (探險組)</button>
+        <button class="diff-btn" onclick="setDifficulty('hard', this)">高階 (大師組)</button>
+      </div>
+
+      <button class="btn-main" onclick="startGame()">
+        <span>啟動引擎 · 出發冒險</span> 🚀
+      </button>
+    </div>
+
+    <footer class="site-credit">
+      Made with <span class="site-credit__heart" aria-label="愛心">❤️</span> by
+      <a href="https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5" target="_blank" rel="noopener noreferrer" class="site-credit__author">阿凱老師</a>
+    </footer>
+  </div>
+
+  <!-- GAME OVER MODAL -->
+  <div class="modal-overlay hidden" id="gameover-modal">
+    <div class="modal-card">
+      <h1 class="game-title" style="background: linear-gradient(135deg, #ff0055, #ff9900); -webkit-background-clip: text;">💥 任務中斷 Game Over</h1>
+      <p class="subtitle" id="gameover-reason">飛船護盾歸零，遭遇隕石撞擊！</p>
+
+      <div style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 14px; color: #94a3b8;">最終探索得分</div>
+        <div style="font-family: 'Orbitron', sans-serif; font-size: 42px; font-weight: 900; color: #00f0ff; margin: 4px 0;" id="go-score">0</div>
+        <div style="font-size: 15px; color: #facc15; font-weight: 700; margin-top: 8px;" id="go-rank">🌟 獲得稱號：星際駕駛新兵</div>
+        <div style="font-size: 13px; color: #cbd5e1; margin-top: 10px; display:flex; justify-content:space-around;">
+          <span>避開隕石：<strong id="go-asteroids" style="color:#00f0ff">0</strong> 個</span>
+          <span>答對問答：<strong id="go-quiz" style="color:#a855f7">0</strong> 題</span>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="restartGame()">
+        <span>重新修復 · 再次挑戰</span> 🔄
+      </button>
+    </div>
+
+    <footer class="site-credit">
+      Made with <span class="site-credit__heart" aria-label="愛心">❤️</span> by
+      <a href="https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5" target="_blank" rel="noopener noreferrer" class="site-credit__author">阿凱老師</a>
+    </footer>
+  </div>
+
+  <!-- QUIZ MODAL -->
+  <div class="modal-overlay hidden" id="quiz-modal">
+    <div class="modal-card quiz-card">
+      <span class="quiz-badge">🌌 星際知識能量補充站</span>
+      <div class="quiz-question" id="quiz-q-text">問答載入中...</div>
+      <div class="quiz-options" id="quiz-options"></div>
+    </div>
+  </div>
+
+  <script>
+    /* === WEB AUDIO SFX SYNTHESIZER === */
+    class SoundFx {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+      playEngineSound() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(40, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.5);
+      }
+      playExplosion() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.6);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(now + 0.6);
+      }
+      playCollect() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(now + 0.35);
+      }
+      playBoost() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.4);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(now + 0.4);
+      }
+      playCorrect() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, now);
+        osc.frequency.setValueAtTime(880, now + 0.12);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(now + 0.4);
+      }
+    }
+    const sfx = new SoundFx();
+
+    /* === ASTRONOMY KNOWLEDGE QUIZ DATASET === */
+    const QUIZ_BANK = [
+      { q: "太陽系中體積最大的行星是哪一顆？", opts: ["木星", "火星", "地球", "水星"], ans: 0 },
+      { q: "哪一顆行星因為表面富含氧化鐵而呈現紅色，被稱為「紅色星球」？", opts: ["火星", "金星", "土星", "天王星"], ans: 0 },
+      { q: "太陽系中擁有最明顯且巨大美麗行星環系統的是？", opts: ["土星", "木星", "海王星", "金星"], ans: 0 },
+      { q: "月球繞行地球公轉一圈大約需要多久時間？", opts: ["大約1個月", "大約1天", "大約1年", "大約10天"], ans: 0 },
+      { q: "太陽本身是一顆什麼類型的天體？", opts: ["恒星", "行星", "衛星", "彗星"], ans: 0 },
+      { q: "離太陽最近的行星是哪一顆？", opts: ["水星", "金星", "地球", "火星"], ans: 0 },
+      { q: "宇宙中引力強大到連光都無法逃脫的天體稱為？", opts: ["黑洞", "白矮星", "彗星", "流星"], ans: 0 },
+      { q: "下列哪一個現象是地球自轉所產生的影響？", opts: ["晝夜交替", "四季變化", "月相盈虧", "日食現象"], ans: 0 },
+      { q: "哈雷彗星大約每隔多少年會接近地球一次？", opts: ["約76年", "約10年", "約1000年", "約5年"], ans: 0 },
+      { q: "北半球指引正北方最重要的指標恒星是？", opts: ["北極星", "獵戶座", "織女星", "牛郎星"], ans: 0 }
+    ];
+
+    /* === GAME STATE & ENGINE === */
+    let scene, camera, renderer;
+    let stars, starGeo, starCount = 1500;
+    let asteroids = [];
+    let knowledgeOrbs = [];
+    let particles = [];
+    let cockpitGroup;
+
+    let gameActive = false;
+    let isPausedForQuiz = false;
+    let currentDifficulty = 'easy'; // easy, normal, hard
+    
+    // Stats
+    let score = 0;
+    let distance = 0;
+    let shield = 100;
+    let boostEnergy = 100;
+    let isBoosting = false;
+    let asteroidsDodgedCount = 0;
+    let quizCorrectCount = 0;
+
+    // Movement Controls
+    const playerPos = { x: 0, y: 0 };
+    const playerVel = { x: 0, y: 0 };
+    const keys = { w: false, a: false, s: false, d: false, boost: false };
+    let touchJoystickDir = { x: 0, y: 0 };
+
+    function setDifficulty(diff, btnEl) {
+      currentDifficulty = diff;
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+
+    function initThree() {
+      const container = document.getElementById('game-canvas');
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030308, 0.008);
+
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 0);
+
+      renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true, alpha: false });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.2);
+      dirLight.position.set(10, 20, 10);
+      scene.add(dirLight);
+
+      const pointLight = new THREE.PointLight(0xff0055, 1.5, 50);
+      pointLight.position.set(-10, -10, -20);
+      scene.add(pointLight);
+
+      // Create Starfield
+      createStarfield();
+
+      // Create Cockpit Frame Group
+      createCockpit3D();
+
+      // Window Resize Listener
+      window.addEventListener('resize', onWindowResize, false);
+    }
+
+    function createStarfield() {
+      starGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(starCount * 3);
+      const velocities = new Float32Array(starCount);
+
+      for (let i = 0; i < starCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 400;
+        positions[i + 1] = (Math.random() - 0.5) * 400;
+        positions[i + 2] = -Math.random() * 400;
+        velocities[i / 3] = Math.random() * 0.5 + 0.5;
+      }
+
+      starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      
+      const starMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.8,
+        transparent: true,
+        opacity: 0.85
+      });
+
+      stars = new THREE.Points(starGeo, starMat);
+      scene.add(stars);
+    }
+
+    function createCockpit3D() {
+      cockpitGroup = new THREE.Group();
+      
+      // Simple futuristic cockpit side struts attached to camera
+      const strutMat = new THREE.MeshBasicMaterial({ color: 0x0a192f, wireframe: true });
+      
+      const leftStrutGeo = new THREE.BoxGeometry(0.2, 3, 0.2);
+      const leftStrut = new THREE.Mesh(leftStrutGeo, strutMat);
+      leftStrut.position.set(-1.8, 0, -1.2);
+      leftStrut.rotation.z = -0.3;
+      cockpitGroup.add(leftStrut);
+
+      const rightStrut = new THREE.Mesh(leftStrutGeo, strutMat);
+      rightStrut.position.set(1.8, 0, -1.2);
+      rightStrut.rotation.z = 0.3;
+      cockpitGroup.add(rightStrut);
+
+      scene.add(cockpitGroup);
+    }
+
+    /* Procedural Low-Poly Asteroid Mesh Builder */
+    function createAsteroidMesh() {
+      const radius = Math.random() * 1.5 + 1.2;
+      const geometry = new THREE.DodecahedronGeometry(radius, 1);
+      
+      // Deform vertices to make rugged rock shape
+      const posAttr = geometry.attributes.position;
+      for (let i = 0; i < posAttr.count; i++) {
+        const x = posAttr.getX(i);
+        const y = posAttr.getY(i);
+        const z = posAttr.getZ(i);
+        const offset = (Math.random() - 0.5) * 0.4;
+        posAttr.setXYZ(i, x + offset, y + offset, z + offset);
+      }
+      geometry.computeVertexNormals();
+
+      const colors = [0x64748b, 0x475569, 0x334155, 0x78716c];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      const material = new THREE.MeshStandardMaterial({
+        color: color,
+        roughness: 0.9,
+        metalness: 0.2,
+        flatShading: true
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.rotationSpeed = {
+        x: (Math.random() - 0.5) * 0.03,
+        y: (Math.random() - 0.5) * 0.03,
+        z: (Math.random() - 0.5) * 0.03
+      };
+      mesh.radius = radius;
+      return mesh;
+    }
+
+    /* Knowledge Orb (Power-up Quiz Crystal) */
+    function createKnowledgeOrb() {
+      const geo = new THREE.OctahedronGeometry(1.2, 0);
+      const mat = new THREE.MeshPhongMaterial({
+        color: 0xa855f7,
+        emissive: 0x7e22ce,
+        shininess: 100,
+        flatShading: true,
+        transparent: true,
+        opacity: 0.9
+      });
+      const orb = new THREE.Mesh(geo, mat);
+      orb.rotationSpeed = 0.04;
+      return orb;
+    }
+
+    /* Particle Explosions */
+    function createExplosion(x, y, z) {
+      sfx.playExplosion();
+      const count = 35;
+      const pGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(count * 3);
+      const pVels = [];
+
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
+        pVels.push({
+          x: (Math.random() - 0.5) * 1.2,
+          y: (Math.random() - 0.5) * 1.2,
+          z: (Math.random() - 0.5) * 1.2,
+          life: 1.0
+        });
+      }
+
+      pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const pMat = new THREE.PointsMaterial({
+        color: 0xff5500,
+        size: 1.5,
+        transparent: true,
+        opacity: 1
+      });
+
+      const pSystem = new THREE.Points(pGeo, pMat);
+      pSystem.userData = { vels: pVels };
+      scene.add(pSystem);
+      particles.push(pSystem);
+    }
+
+    /* Spawning Logic */
+    function spawnAsteroid() {
+      const mesh = createAsteroidMesh();
+      mesh.position.x = (Math.random() - 0.5) * 35;
+      mesh.position.y = (Math.random() - 0.5) * 25;
+      mesh.position.z = -180 - Math.random() * 40;
+      scene.add(mesh);
+      asteroids.push(mesh);
+    }
+
+    function spawnKnowledgeOrb() {
+      const orb = createKnowledgeOrb();
+      orb.position.x = (Math.random() - 0.5) * 20;
+      orb.position.y = (Math.random() - 0.5) * 15;
+      orb.position.z = -200;
+      scene.add(orb);
+      knowledgeOrbs.push(orb);
+    }
+
+    /* INPUT HANDLERS */
+    function setupControls() {
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (!gameActive || isPausedForQuiz) return;
+        sfx.init();
+        if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.w = true;
+        if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.s = true;
+        if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.a = true;
+        if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.d = true;
+        if (e.key === ' ' || e.key === 'Shift') {
+          keys.boost = true;
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.w = false;
+        if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.s = false;
+        if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.a = false;
+        if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.d = false;
+        if (e.key === ' ' || e.key === 'Shift') keys.boost = false;
+      });
+
+      // Mobile Touch Joystick
+      const zone = document.getElementById('joystick-zone');
+      const handle = document.getElementById('joystick-handle');
+
+      let touchId = null;
+      let center = { x: 0, y: 0 };
+
+      zone.addEventListener('touchstart', (e) => {
+        if (touchId !== null) return;
+        sfx.init();
+        const touch = e.changedTouches[0];
+        touchId = touch.identifier;
+        const rect = zone.getBoundingClientRect();
+        center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        updateJoystick(touch);
+      }, { passive: false });
+
+      zone.addEventListener('touchmove', (e) => {
+        for (let t of e.changedTouches) {
+          if (t.identifier === touchId) {
+            updateJoystick(t);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      const resetJoystick = () => {
+        touchId = null;
+        touchJoystickDir = { x: 0, y: 0 };
+        handle.style.transform = 'translate(-50%, -50%)';
+      };
+
+      zone.addEventListener('touchend', resetJoystick);
+      zone.addEventListener('touchcancel', resetJoystick);
+
+      function updateJoystick(touch) {
+        const dx = touch.clientX - center.x;
+        const dy = touch.clientY - center.y;
+        const dist = Math.min(Math.hypot(dx, dy), 50);
+        const angle = Math.atan2(dy, dx);
+        
+        const hx = Math.cos(angle) * dist;
+        const hy = Math.sin(angle) * dist;
+        
+        handle.style.transform = `translate(calc(-50% + ${hx}px), calc(-50% + ${hy}px))`;
+        
+        touchJoystickDir.x = hx / 50;
+        touchJoystickDir.y = hy / 50;
+      }
+
+      // Boost Touch Button
+      const btnBoost = document.getElementById('btn-touch-boost');
+      btnBoost.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        sfx.init();
+        keys.boost = true;
+      });
+      btnBoost.addEventListener('touchend', () => { keys.boost = false; });
+    }
+
+    /* GAME LOOP & UPDATES */
+    let lastTime = 0;
+    function gameLoop(timestamp) {
+      requestAnimationFrame(gameLoop);
+      const delta = Math.min((timestamp - lastTime) / 1000, 0.1);
+      lastTime = timestamp;
+
+      if (gameActive && !isPausedForQuiz) {
+        updatePlayerMovement(delta);
+        updateAsteroids(delta);
+        updateKnowledgeOrbs(delta);
+        updateParticles(delta);
+        updateStars(delta);
+        updateHUD();
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function updatePlayerMovement(delta) {
+      let speedFactor = 12;
+      let moveX = 0;
+      let moveY = 0;
+
+      // Keyboard input
+      if (keys.a) moveX -= 1;
+      if (keys.d) moveX += 1;
+      if (keys.w) moveY += 1; // Pitch down / fly up
+      if (keys.s) moveY -= 1; // Pitch up / fly down
+
+      // Combine with touch joystick
+      moveX += touchJoystickDir.x;
+      moveY -= touchJoystickDir.y;
+
+      playerVel.x += moveX * speedFactor * delta;
+      playerVel.y += moveY * speedFactor * delta;
+
+      // Drag
+      playerVel.x *= 0.9;
+      playerVel.y *= 0.9;
+
+      playerPos.x += playerVel.x;
+      playerPos.y += playerVel.y;
+
+      // Boundaries
+      playerPos.x = Math.max(-14, Math.min(14, playerPos.x));
+      playerPos.y = Math.max(-9, Math.min(9, playerPos.y));
+
+      // Camera position & cockpit sway
+      camera.position.x = playerPos.x;
+      camera.position.y = playerPos.y;
+      
+      // Roll tilt simulation
+      camera.rotation.z = -playerVel.x * 0.08;
+      camera.rotation.x = playerVel.y * 0.05;
+
+      if (cockpitGroup) {
+        cockpitGroup.position.x = playerPos.x;
+        cockpitGroup.position.y = playerPos.y;
+        cockpitGroup.rotation.z = camera.rotation.z;
+        cockpitGroup.rotation.x = camera.rotation.x;
+      }
+
+      // Boost check
+      isBoosting = keys.boost && boostEnergy > 5;
+      if (isBoosting) {
+        boostEnergy = Math.max(0, boostEnergy - 35 * delta);
+        camera.fov = THREE.MathUtils.lerp(camera.fov, 88, 0.1);
+        sfx.playBoost();
+      } else {
+        boostEnergy = Math.min(100, boostEnergy + 15 * delta);
+        camera.fov = THREE.MathUtils.lerp(camera.fov, 75, 0.1);
+      }
+      camera.updateProjectionMatrix();
+    }
+
+    function updateAsteroids(delta) {
+      const baseSpeed = currentDifficulty === 'easy' ? 40 : (currentDifficulty === 'normal' ? 60 : 85);
+      const currentSpeed = isBoosting ? baseSpeed * 2.2 : baseSpeed;
+
+      distance += Math.round(currentSpeed * delta * 0.2);
+      score += Math.round((isBoosting ? 25 : 10) * delta * 10);
+
+      // Spawn rate based on difficulty
+      const spawnChance = currentDifficulty === 'easy' ? 0.04 : (currentDifficulty === 'normal' ? 0.07 : 0.11);
+      if (Math.random() < spawnChance) {
+        spawnAsteroid();
+      }
+
+      for (let i = asteroids.length - 1; i >= 0; i--) {
+        const ast = asteroids[i];
+        ast.position.z += currentSpeed * delta;
+        
+        ast.rotation.x += ast.rotationSpeed.x;
+        ast.rotation.y += ast.rotationSpeed.y;
+
+        // Collision Check with Ship
+        const distToShip = Math.hypot(ast.position.x - playerPos.x, ast.position.y - playerPos.y);
+        if (ast.position.z > -2.5 && ast.position.z < 2.5 && distToShip < (ast.radius + 0.8)) {
+          createExplosion(ast.position.x, ast.position.y, ast.position.z);
+          scene.remove(ast);
+          asteroids.splice(i, 1);
+
+          if (!isBoosting) {
+            shield -= 25;
+            if (shield <= 0) {
+              triggerGameOver("飛船受創嚴重，護盾崩潰！");
+            }
+          }
+          continue;
+        }
+
+        // Passed Ship Safely
+        if (ast.position.z > 10) {
+          scene.remove(ast);
+          asteroids.splice(i, 1);
+          asteroidsDodgedCount++;
+        }
+      }
+
+      // Random Knowledge Orb spawn
+      if (Math.random() < 0.005) {
+        spawnKnowledgeOrb();
+      }
+    }
+
+    function updateKnowledgeOrbs(delta) {
+      const currentSpeed = isBoosting ? 120 : 60;
+      for (let i = knowledgeOrbs.length - 1; i >= 0; i--) {
+        const orb = knowledgeOrbs[i];
+        orb.position.z += currentSpeed * delta;
+        orb.rotation.y += orb.rotationSpeed;
+
+        const dist = Math.hypot(orb.position.x - playerPos.x, orb.position.y - playerPos.y);
+        if (orb.position.z > -3 && orb.position.z < 3 && dist < 2.5) {
+          sfx.playCollect();
+          scene.remove(orb);
+          knowledgeOrbs.splice(i, 1);
+          triggerQuizModal();
+          continue;
+        }
+
+        if (orb.position.z > 10) {
+          scene.remove(orb);
+          knowledgeOrbs.splice(i, 1);
+        }
+      }
+    }
+
+    function updateParticles(delta) {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pSystem = particles[i];
+        const posAttr = pSystem.geometry.attributes.position;
+        const vels = pSystem.userData.vels;
+        let allDead = true;
+
+        for (let j = 0; j < vels.length; j++) {
+          const v = vels[j];
+          if (v.life > 0) {
+            allDead = false;
+            v.life -= delta * 2;
+            posAttr.setX(j, posAttr.getX(j) + v.x);
+            posAttr.setY(j, posAttr.getY(j) + v.y);
+            posAttr.setZ(j, posAttr.getZ(j) + v.z);
+          }
+        }
+        posAttr.needsUpdate = true;
+        pSystem.material.opacity = Math.max(0, vels[0].life);
+
+        if (allDead) {
+          scene.remove(pSystem);
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    function updateStars(delta) {
+      const pos = starGeo.attributes.position;
+      const speed = isBoosting ? 180 : 40;
+      for (let i = 0; i < starCount; i++) {
+        let z = pos.getZ(i);
+        z += speed * delta;
+        if (z > 10) z = -400;
+        pos.setZ(i, z);
+      }
+      pos.needsUpdate = true;
+    }
+
+    function updateHUD() {
+      document.getElementById('hud-score').innerText = String(score).padStart(5, '0');
+      document.getElementById('hud-dist').innerText = `${(distance / 10).toFixed(1)} km`;
+      document.getElementById('hud-shield-val').innerText = `${Math.max(0, Math.round(shield))}%`;
+      document.getElementById('shield-bar').style.width = `${Math.max(0, shield)}%`;
+      document.getElementById('boost-meter').style.width = `${Math.max(0, boostEnergy)}%`;
+    }
+
+    /* QUIZ SYSTEM */
+    function triggerQuizModal() {
+      isPausedForQuiz = true;
+      const quizModal = document.getElementById('quiz-modal');
+      quizModal.classList.remove('hidden');
+
+      const quiz = QUIZ_BANK[Math.floor(Math.random() * QUIZ_BANK.length)];
+      document.getElementById('quiz-q-text').innerText = quiz.q;
+
+      const optsContainer = document.getElementById('quiz-options');
+      optsContainer.innerHTML = '';
+
+      quiz.opts.forEach((optText, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.innerText = `${index + 1}. ${optText}`;
+        btn.onclick = () => handleQuizAnswer(index === quiz.ans);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function handleQuizAnswer(isCorrect) {
+      const quizModal = document.getElementById('quiz-modal');
+      quizModal.classList.add('hidden');
+      isPausedForQuiz = false;
+
+      if (isCorrect) {
+        sfx.playCorrect();
+        quizCorrectCount++;
+        score += 500;
+        shield = Math.min(100, shield + 35);
+        boostEnergy = 100;
+        showWarningBanner("✨ 答對了！獲得星際能量加成！");
+      } else {
+        showWarningBanner("❌ 答案有誤！繼續保持警惕！");
+      }
+    }
+
+    function showWarningBanner(msg) {
+      const banner = document.getElementById('warning-banner');
+      banner.innerText = msg;
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 2000);
+    }
+
+    /* GAME FLOW */
+    function startGame() {
+      sfx.init();
+      document.getElementById('start-modal').classList.add('hidden');
+      resetStats();
+      gameActive = true;
+    }
+
+    function resetStats() {
+      score = 0;
+      distance = 0;
+      shield = 100;
+      boostEnergy = 100;
+      asteroidsDodgedCount = 0;
+      quizCorrectCount = 0;
+      playerPos.x = 0;
+      playerPos.y = 0;
+      playerVel.x = 0;
+      playerVel.y = 0;
+
+      // Clear existing meshes
+      asteroids.forEach(a => scene.remove(a));
+      knowledgeOrbs.forEach(k => scene.remove(k));
+      particles.forEach(p => scene.remove(p));
+      asteroids = [];
+      knowledgeOrbs = [];
+      particles = [];
+    }
+
+    function triggerGameOver(reason) {
+      gameActive = false;
+      document.getElementById('gameover-modal').classList.remove('hidden');
+      document.getElementById('gameover-reason').innerText = reason;
+      document.getElementById('go-score').innerText = score;
+      document.getElementById('go-asteroids').innerText = asteroidsDodgedCount;
+      document.getElementById('go-quiz').innerText = quizCorrectCount;
+
+      let rank = "🌟 星際實習飛行員";
+      if (score > 3000) rank = "🚀 太空資深駕駛員";
+      if (score > 8000) rank = "🌌 宇宙探險隊長";
+      if (score > 15000) rank = "👑 星際科普學霸大師";
+      document.getElementById('go-rank').innerText = `獲得稱號：${rank}`;
+    }
+
+    function restartGame() {
+      document.getElementById('gameover-modal').classList.add('hidden');
+      resetStats();
+      gameActive = true;
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Initialize Game on Load
+    window.addEventListener('load', () => {
+      initThree();
+      setupControls();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
+</body>
+</html>
