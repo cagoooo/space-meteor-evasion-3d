@@ -653,7 +653,7 @@
         <div class="hud-title" style="display:flex; justify-content:space-between; align-items:center;">
           <span>飛船能量護盾 <strong id="hud-shield-val" style="color:#00f0ff; font-weight:900;">100%</strong></span>
           <div class="top-action-bar">
-            <button class="btn-hud-action" id="btn-toggle-bgm" onclick="toggleBGM()">🎵 Suno BGM: 開</button>
+            <button class="btn-hud-action" id="btn-toggle-bgm" onclick="toggleBGM()">🎵 星際 BGM: 開</button>
           </div>
         </div>
         <div class="meter-bg">
@@ -690,7 +690,7 @@
   <div class="modal-overlay" id="start-modal">
     <div class="modal-card">
       <h1 class="game-title">🚀 3D 星際雷霆解題大冒險</h1>
-      <p class="subtitle">第一人稱飛船駕駛 · 電腦點擊/鍵盤/觸控全滑動 · Suno BGM 與太空戰術寶箱</p>
+      <p class="subtitle">第一人稱飛船駕駛 · 電腦點擊/鍵盤/觸控全滑動 · Pixabay 星際 BGM 與太空戰術寶箱</p>
 
       <div class="instructions-grid">
         <div class="inst-card">
@@ -706,8 +706,8 @@
           太空中會出現顯眼的「❓問號智囊球」，飛近或射擊即可開啟解題補血！
         </div>
         <div class="inst-card">
-          <strong>🎵 Suno AI 音效與 BGM</strong>
-          內建動態 Suno 英雄太空 BGM 與立體星戰衝擊聲效！
+          <strong>🎵 Pixabay CC0 星際 BGM</strong>
+          內建 Pixabay 高音質太空 Synthwave 冒險 BGM 與立體星戰音效！
         </div>
       </div>
 
@@ -804,7 +804,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.18";
+    const APP_VERSION = "2026.07.27.19";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -886,7 +886,9 @@
       }
     }
 
-    /* REAL SUNO MP3 AUDIO MANAGER & WEB AUDIO FALLBACK */
+    /* PIXABAY CC0 MP3 AUDIO MANAGER & WEB AUDIO FALLBACK
+       BGM Track: "Space Arcade Synthwave" by Pixabay CC0 License
+    */
     class SoundFx {
       constructor() {
         this.ctx = null;
@@ -897,12 +899,13 @@
 
         this.audioEl = new Audio();
         this.audioEl.loop = true;
-        this.audioEl.volume = 0.55;
+        this.audioEl.preload = 'auto';
+        this.audioEl.volume = 0;
         this.audioEl.src = './assets/audio/bgm-space-arcade.mp3';
 
         this.audioEl.addEventListener('canplaythrough', () => {
           this.hasRealAudio = true;
-          console.log('✅ 檢測到 Suno 實體 BGM MP3 音檔！優先使用高音質串流播放');
+          console.log('✅ 檢測到 Pixabay 實體星際 BGM MP3 音檔 (4.7MB)！開啟高音質淡入播放');
         });
         this.audioEl.addEventListener('error', () => {
           this.hasRealAudio = false;
@@ -991,8 +994,18 @@
         if (!this.bgmEnabled) return;
         this.init();
 
-        if (this.hasRealAudio) {
-          this.audioEl.play().catch(() => {});
+        if (this.hasRealAudio || this.audioEl.readyState >= 2) {
+          this.audioEl.play().then(() => {
+            // 2 秒平滑淡入到 0.45 音量
+            const targetVol = 0.45;
+            const steps = 20;
+            let i = 0;
+            const fadeInTimer = setInterval(() => {
+              if (!this.bgmEnabled || !this.audioEl) { clearInterval(fadeInTimer); return; }
+              this.audioEl.volume = Math.min(targetVol, (++i / steps) * targetVol);
+              if (i >= steps) clearInterval(fadeInTimer);
+            }, 100);
+          }).catch(() => {});
           return;
         }
 
