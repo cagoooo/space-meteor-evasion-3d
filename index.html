@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072712">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072712">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072713">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072713">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072712">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072713">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072712">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072712">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072712">
-  <link rel="manifest" href="./manifest.json?v=2026072712">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072713">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072713">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072713">
+  <link rel="manifest" href="./manifest.json?v=2026072713">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -167,6 +167,18 @@
       font-weight: 900;
       text-shadow: 0 0 10px #facc15;
       margin-left: 4px;
+    }
+
+    .buff-badge {
+      display: inline-block;
+      font-size: 11px;
+      color: #38bdf8;
+      background: rgba(0, 240, 255, 0.2);
+      border: 1px solid #00f0ff;
+      border-radius: 8px;
+      padding: 2px 6px;
+      margin-left: 6px;
+      font-weight: 700;
     }
 
     .shield-container {
@@ -361,7 +373,7 @@
     .subtitle {
       font-size: clamp(14px, 1.8vw, 17px);
       color: #cbd5e1;
-      margin-bottom: 26px;
+      margin-bottom: 22px;
       line-height: 1.6;
     }
 
@@ -369,7 +381,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 14px;
-      margin-bottom: 26px;
+      margin-bottom: 22px;
       text-align: left;
     }
     .inst-card {
@@ -387,25 +399,37 @@
       font-size: clamp(14px, 1.5vw, 16px);
     }
 
-    .difficulty-select {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 28px;
+    .select-label {
+      font-size: 13px;
+      color: #38bdf8;
+      font-weight: 800;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-    .diff-btn {
+
+    .category-select, .difficulty-select {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .cat-btn, .diff-btn {
       flex: 1;
-      padding: 12px 20px;
+      min-width: 140px;
+      padding: 12px 16px;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.22);
       border-radius: 16px;
       color: #cbd5e1;
       font-weight: 800;
-      font-size: clamp(14px, 1.5vw, 16px);
+      font-size: clamp(13px, 1.4vw, 15px);
       cursor: pointer;
       transition: all 0.2s;
     }
-    .diff-btn.active {
+    .cat-btn.active, .diff-btn.active {
       background: rgba(0, 240, 255, 0.25);
       border-color: #00f0ff;
       color: #00f0ff;
@@ -541,7 +565,7 @@
   <div class="hud-layer" id="hud-layer">
     <div class="top-hud">
       <div class="hud-card">
-        <div class="hud-title">目前得分 <span class="combo-badge" id="combo-badge"></span></div>
+        <div class="hud-title">目前得分 <span class="combo-badge" id="combo-badge"></span><span class="buff-badge" id="buff-badge" style="display:none;"></span></div>
         <div class="hud-value" id="hud-score">00000</div>
       </div>
 
@@ -586,7 +610,7 @@
   <div class="modal-overlay" id="start-modal">
     <div class="modal-card">
       <h1 class="game-title">🚀 3D 星際雷霆解題大冒險</h1>
-      <p class="subtitle">第一人稱飛船駕駛 · 電腦點擊/鍵盤/觸控全滑動 · Suno BGM 與太空科學解題版</p>
+      <p class="subtitle">第一人稱飛船駕駛 · 電腦點擊/鍵盤/觸控全滑動 · Suno BGM 與太空戰術寶箱</p>
 
       <div class="instructions-grid">
         <div class="inst-card">
@@ -594,12 +618,12 @@
           電腦鍵盤 `WASD` / 滑鼠點擊，或手機螢幕按住隨意滑動
         </div>
         <div class="inst-card">
-          <strong>💥 能量雷射砲與衝刺</strong>
-          按下 `J` 鍵或點擊【發射】鈕；按 `Space` 或【衝刺】鈕飆速
+          <strong>💥 散彈砲與戰術寶箱</strong>
+          收集太空中出現的「📦 戰術寶箱」可獲得散彈火砲、時間減速與護盾補給！
         </div>
         <div class="inst-card">
           <strong>❓ 捕捉發光「問號解題球」</strong>
-          太空中會出現顯眼的發光「❓問號智囊球」，飛近或射擊即可開啟解題補血！
+          太空中會出現顯眼的「❓問號智囊球」，飛近或射擊即可開啟解題補血！
         </div>
         <div class="inst-card">
           <strong>🎵 Suno AI 音效與 BGM</strong>
@@ -607,6 +631,14 @@
         </div>
       </div>
 
+      <div class="select-label">選擇探索主題題庫：</div>
+      <div class="category-select">
+        <button class="cat-btn active" onclick="setCategory('astro', this)">☀️ 太陽系與天文科學</button>
+        <button class="cat-btn" onclick="setCategory('nature', this)">🌱 國小自然與生態環境</button>
+        <button class="cat-btn" onclick="setCategory('tech', this)">💻 資訊科技與 AI 常識</button>
+      </div>
+
+      <div class="select-label">選擇航行關卡難度：</div>
       <div class="difficulty-select">
         <button class="diff-btn active" onclick="setDifficulty('easy', this)">初階 (太陽系)</button>
         <button class="diff-btn" onclick="setDifficulty('normal', this)">中階 (隕石帶)</button>
@@ -671,7 +703,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.12";
+    const APP_VERSION = "2026.07.27.13";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -910,81 +942,101 @@
       }
     }
 
-    /* ASTRONOMY KNOWLEDGE & EDUCATIONAL STRATEGY DATASET */
-    const QUIZ_BANK = [
-      {
-        q: "太陽系中體積最大的行星是哪一顆？",
-        opts: ["木星", "火星", "地球", "水星"],
-        ans: 0,
-        strategy: "【解題關鍵】木星是太陽系八大行星中體積與質量最大的氣態巨行星，其質量是其他所有行星總和的2.5倍！"
-      },
-      {
-        q: "哪一顆行星因為表面富含氧化鐵呈現紅色，被稱為「紅色星球」？",
-        opts: ["火星", "金星", "土星", "天王星"],
-        ans: 0,
-        strategy: "【解題關鍵】火星地表岩石與土壤中含有大量三氧化二鐵（鐵銹色），反射陽光後呈現獨特的橘紅色。"
-      },
-      {
-        q: "太陽系中擁有最明顯且巨大美麗行星環系統的是？",
-        opts: ["土星", "木星", "海王星", "金星"],
-        ans: 0,
-        strategy: "【解題關鍵】土星環主要由大量的冰粒、岩石碎片與塵埃組成，在天文望遠鏡下清晰可見。"
-      },
-      {
-        q: "月球繞行地球公轉一圈大約需要多久時間？",
-        opts: ["大約1個月 (約27.3天)", "大約1天", "大約1年", "大約10天"],
-        ans: 0,
-        strategy: "【解題關鍵】月球繞地球公轉一圈（恆星月）約27.3天，這也是農曆一個月週期的科學根據。"
-      },
-      {
-        q: "太陽本身是一顆什麼類型的天體？",
-        opts: ["恒星", "行星", "衛星", "彗星"],
-        ans: 0,
-        strategy: "【解題關鍵】恒星是指自身能透過核融合反應發光發熱的天體，太陽是太陽系唯一的恒星。"
-      },
-      {
-        q: "離太陽最近的行星是哪一顆？",
-        opts: ["水星", "金星", "地球", "火星"],
-        ans: 0,
-        strategy: "【解題關鍵】八大行星由內而外順序為：水星 ➔ 金星 ➔ 地球 ➔ 火星 ➔ 木星 ➔ 土星 ➔ 天王星 ➔ 海王星。"
-      },
-      {
-        q: "宇宙中引力強大到連光都無法逃脫的天體稱為？",
-        opts: ["黑洞", "白矮星", "彗星", "流星"],
-        ans: 0,
-        strategy: "【解題關鍵】黑洞具有極度強大的重力場，當大質量恆星演化到末期塌縮時便可能形成黑洞。"
-      },
-      {
-        q: "下列哪一個現象是地球自轉所產生的影響？",
-        opts: ["晝夜交替", "四季變化", "月相盈虧", "日食現象"],
-        ans: 0,
-        strategy: "【解題關鍵】地球每24小時繞地軸自轉一圈造成晝夜交替；而繞太陽公轉與地軸傾斜則造成四季變化。"
-      },
-      {
-        q: "哈雷彗星大約每隔多少年會接近地球一次？",
-        opts: ["約76年", "約10年", "約1000年", "約5年"],
-        ans: 0,
-        strategy: "【解題關鍵】哈雷彗星是著名短週期彗星，大約每75至76年回歸一次，上一次接近地球是1986年。"
-      },
-      {
-        q: "北半球指引正北方最重要的指標恒星是？",
-        opts: ["北極星", "獵戶座", "織女星", "牛郎星"],
-        ans: 0,
-        strategy: "【解題關鍵】北極星幾乎位於地軸北極延長線上，因此在夜空中位置幾乎固定不變，是天然指針。"
-      }
-    ];
+    /* MULTI-CATEGORY EDUCATIONAL QUIZ BANKS */
+    const QUIZ_BANKS = {
+      astro: [
+        {
+          q: "太陽系中體積最大的行星是哪一顆？",
+          opts: ["木星", "火星", "地球", "水星"],
+          ans: 0,
+          strategy: "【解題關鍵】木星是太陽系八大行星中體積與質量最大的氣態巨行星，其質量是其他所有行星總和的2.5倍！"
+        },
+        {
+          q: "哪一顆行星因為表面富含氧化鐵呈現紅色，被稱為「紅色星球」？",
+          opts: ["火星", "金星", "土星", "天王星"],
+          ans: 0,
+          strategy: "【解題關鍵】火星地表岩石與土壤中含有大量三氧化二鐵（鐵銹色），反射陽光後呈現獨特的橘紅色。"
+        },
+        {
+          q: "太陽系中擁有最明顯且巨大美麗行星環系統的是？",
+          opts: ["土星", "木星", "海王星", "金星"],
+          ans: 0,
+          strategy: "【解題關鍵】土星環主要由大量的冰粒、岩石碎片與塵埃組成，在天文望遠鏡下清晰可見。"
+        },
+        {
+          q: "月球繞行地球公轉一圈大約需要多久時間？",
+          opts: ["大約1個月 (約27.3天)", "大約1天", "大約1年", "大約10天"],
+          ans: 0,
+          strategy: "【解題關鍵】月球繞地球公轉一圈（恆星月）約27.3天，這也是農曆一個月週期的科學根據。"
+        },
+        {
+          q: "離太陽最近的行星是哪一顆？",
+          opts: ["水星", "金星", "地球", "火星"],
+          ans: 0,
+          strategy: "【解題關鍵】八大行星由內而外順序為：水星 ➔ 金星 ➔ 地球 ➔ 火星 ➔ 木星 ➔ 土星 ➔ 天王星 ➔ 海王星。"
+        }
+      ],
+      nature: [
+        {
+          q: "綠色植物進行光合作用主要需要太陽光、水以及哪一種氣體？",
+          opts: ["二氧化碳", "氧氣", "氮氣", "氫氣"],
+          ans: 0,
+          strategy: "【解題關鍵】植物葉綠體吸收二氧化碳與水，利用日光合成葡萄糖並釋放出氧氣！"
+        },
+        {
+          q: "水在自然界的三態變化中，由液態變成氣態的過程稱為？",
+          opts: ["蒸發 (凝結/蒸發)", "凝固", "昇華", "融化"],
+          ans: 0,
+          strategy: "【解題關鍵】液態水吸熱後變為水蒸氣稱為「蒸發」；而水蒸氣遇冷變成水滴則稱為「凝結」。"
+        },
+        {
+          q: "下列哪一種動物屬於體溫恆定的溫血脊椎動物？",
+          opts: ["企鵝", "青蛙", "蜥蜴", "小丑魚"],
+          ans: 0,
+          strategy: "【解題關鍵】鳥類（如企鵝）與哺乳類屬於恆溫動物；兩棲類、爬蟲類與魚類則屬於變溫動物。"
+        },
+        {
+          q: "地球上引起潮汐升降現象最主要的引力來源是？",
+          opts: ["月球重力引力", "太陽風爆", "地球磁場", "大氣壓力"],
+          ans: 0,
+          strategy: "【解題關鍵】月球距離地球最近，其起潮力是造成地球海洋定期漲潮與退潮的主要原因。"
+        }
+      ],
+      tech: [
+        {
+          q: "電腦硬體中負責執行運算、被稱為「電腦大腦」的元件是？",
+          opts: ["中央處理器 (CPU)", "硬碟 (HDD)", "電源供應器", "顯示器"],
+          ans: 0,
+          strategy: "【解題關鍵】CPU (Central Processing Unit) 負責執行程式碼邏輯與算術運算，是電腦的核心心臟。"
+        },
+        {
+          q: "在網路安全中，設定複雜密碼時下列哪種組合最安全？",
+          opts: ["包含大小寫英文、數字與特殊符號", "自己的生日", "連續數字 123456", "手機號碼"],
+          ans: 0,
+          strategy: "【解題關鍵】長度足夠並混合大小寫字母、數字與特殊符號（如 !@#$）能大幅降低被撞庫破解的風險。"
+        },
+        {
+          q: "生成式 AI (Generative AI) 主要能幫我們進行哪些創作？",
+          opts: ["自動生成文字、繪圖、程式碼與音樂", "替電腦實體打掃", "更換實體螢幕", "修復實體鍵盤"],
+          ans: 0,
+          strategy: "【解題關鍵】生成式 AI 透過深度學習大模型，能從文字提示詞快速產出文案、圖像、程式碼與音樂！"
+        }
+      ]
+    };
 
-    /* THREE.JS GAME ENGINE */
+    /* THREE.JS GAME ENGINE & VFX */
     let scene, camera, renderer;
     let stars, starGeo, starCount = 1800;
     let asteroids = [];
     let lasers = [];
     let knowledgeOrbs = [];
+    let powerupPods = [];
     let particles = [];
-    let cockpitGroup;
+    let cockpitGroup, shieldDomeMesh;
 
     let gameActive = false;
     let isPausedForQuiz = false;
+    let currentCategory = 'astro';
     let currentDifficulty = 'easy';
     
     let score = 0;
@@ -998,7 +1050,12 @@
     let comboCount = 0;
     let lastFireTime = 0;
     let orbSpawnTimer = 0;
+    let podSpawnTimer = 0;
     let invincibilityTimer = 0;
+
+    /* BUFF TIMERS & STATE */
+    let spreadLaserTimer = 0; // 三向散彈砲
+    let slowTimeTimer = 0;   // 時間減速鐘
 
     const playerPos = { x: 0, y: 0 };
     const playerVel = { x: 0, y: 0 };
@@ -1007,6 +1064,12 @@
     let isTouchDragging = false;
     let touchStartPos = { x: 0, y: 0 };
     let playerStartPos = { x: 0, y: 0 };
+
+    function setCategory(cat, btnEl) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
 
     function setDifficulty(diff, btnEl) {
       currentDifficulty = diff;
@@ -1042,6 +1105,7 @@
 
       createStarfield();
       createCockpit3D();
+      createShieldDome3D();
 
       window.addEventListener('resize', onWindowResize, false);
     }
@@ -1086,6 +1150,23 @@
       cockpitGroup.add(rightStrut);
 
       scene.add(cockpitGroup);
+    }
+
+    /* P0-2: 3D 飛船半透明蜂巢能量防護罩 Dome */
+    function createShieldDome3D() {
+      const shieldGeo = new THREE.IcosahedronGeometry(2.5, 2);
+      const shieldMat = new THREE.MeshPhongMaterial({
+        color: 0x00f0ff,
+        emissive: 0x00f0ff,
+        emissiveIntensity: 0.6,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.75
+      });
+      shieldDomeMesh = new THREE.Mesh(shieldGeo, shieldMat);
+      shieldDomeMesh.position.set(0, 0, -1.0);
+      shieldDomeMesh.visible = false;
+      camera.add(shieldDomeMesh);
     }
 
     function createAsteroidMesh() {
@@ -1177,6 +1258,45 @@
       return orbGroup;
     }
 
+    /* P1-2: 多元戰術寶箱 (Power-up Pod Mesh) */
+    function createPowerupPodMesh(type) {
+      const podGroup = new THREE.Group();
+
+      const boxGeo = new THREE.BoxGeometry(2.4, 2.4, 2.4);
+      let colorHex = 0x00f0ff;
+      let iconStr = '🛡️';
+
+      if (type === 'spread') { colorHex = 0xff0055; iconStr = '💥'; }
+      if (type === 'slow') { colorHex = 0xfacc15; iconStr = '⏳'; }
+
+      const boxMat = new THREE.MeshPhongMaterial({
+        color: colorHex,
+        emissive: colorHex,
+        emissiveIntensity: 0.9,
+        wireframe: true
+      });
+      const boxMesh = new THREE.Mesh(boxGeo, boxMat);
+      podGroup.add(boxMesh);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.font = '900 160px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(iconStr, 128, 128);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(5.5, 5.5, 1);
+      podGroup.add(sprite);
+
+      podGroup.userData = { type: type };
+      podGroup.rotationSpeed = 0.03;
+      return podGroup;
+    }
+
     function fireLaser() {
       const now = performance.now();
       if (now - lastFireTime < 160) return;
@@ -1184,17 +1304,61 @@
 
       sfx.playLaser();
 
-      const geo = new THREE.CylinderGeometry(0.15, 0.15, 3.2, 8);
-      geo.rotateX(Math.PI / 2);
-      const mat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
-      const laser = new THREE.Mesh(geo, mat);
+      const createSingleLaser = (angleOffset = 0) => {
+        const geo = new THREE.CylinderGeometry(0.15, 0.15, 3.2, 8);
+        geo.rotateX(Math.PI / 2);
+        const mat = new THREE.MeshBasicMaterial({ color: spreadLaserTimer > 0 ? 0xff0055 : 0x00f0ff });
+        const laser = new THREE.Mesh(geo, mat);
 
-      laser.position.x = playerPos.x;
-      laser.position.y = playerPos.y - 0.4;
-      laser.position.z = -1.5;
+        laser.position.x = playerPos.x;
+        laser.position.y = playerPos.y - 0.4;
+        laser.position.z = -1.5;
 
-      scene.add(laser);
-      lasers.push(laser);
+        laser.userData = { angle: angleOffset };
+        scene.add(laser);
+        lasers.push(laser);
+      };
+
+      createSingleLaser(0);
+
+      // P1-2: 三向散彈火砲 (Spread Shot)
+      if (spreadLaserTimer > 0) {
+        createSingleLaser(-0.25);
+        createSingleLaser(0.25);
+      }
+    }
+
+    /* P0-1: 3D 衝刺藍光尾跡粒子特效 (Warp Particles) */
+    function createWarpParticles() {
+      const count = 25;
+      const pGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(count * 3);
+      const pVels = [];
+
+      for (let i = 0; i < count; i++) {
+        positions[i * 3] = playerPos.x + (Math.random() - 0.5) * 4;
+        positions[i * 3 + 1] = playerPos.y + (Math.random() - 0.5) * 3;
+        positions[i * 3 + 2] = -1.0;
+        pVels.push({
+          x: (Math.random() - 0.5) * 0.8,
+          y: (Math.random() - 0.5) * 0.8,
+          z: Math.random() * 4.0 + 2.0,
+          life: 0.8
+        });
+      }
+
+      pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const pMat = new THREE.PointsMaterial({
+        color: 0x00f0ff,
+        size: 1.8,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      const pSystem = new THREE.Points(pGeo, pMat);
+      pSystem.userData = { vels: pVels };
+      scene.add(pSystem);
+      particles.push(pSystem);
     }
 
     function createExplosion(x, y, z, colorHex = 0xff5500) {
@@ -1247,6 +1411,23 @@
       scene.add(orb);
       knowledgeOrbs.push(orb);
       showWarningBanner("❓ 發現「星際問號解題智囊球」！駕駛飛船靠近或射擊即可觸發！");
+    }
+
+    /* P1-2: 隨機生成太空戰術寶箱 (Power-up Pods) */
+    function spawnPowerupPod() {
+      const types = ['shield', 'spread', 'slow'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const pod = createPowerupPodMesh(type);
+      pod.position.x = (Math.random() - 0.5) * 10;
+      pod.position.y = (Math.random() - 0.5) * 6;
+      pod.position.z = -55;
+      scene.add(pod);
+      powerupPods.push(pod);
+
+      let msg = "📦 發現「能量護盾補給箱」！靠近或射擊補血！";
+      if (type === 'spread') msg = "📦 發現「三向散彈火砲箱」！靠近或射擊強攻！";
+      if (type === 'slow') msg = "📦 發現「時間減速鐘寶箱」！靠近或射擊減速！";
+      showWarningBanner(msg);
     }
 
     function setupControls() {
@@ -1321,7 +1502,7 @@
       btnBoost.addEventListener('touchend', endBoost);
     }
 
-    /* GAME LOOP & UPDATES - 解題時背景動態與碰撞 100% 完全凍結暫停 */
+    /* GAME LOOP & UPDATES */
     let lastTime = 0;
     function gameLoop(timestamp) {
       requestAnimationFrame(gameLoop);
@@ -1329,23 +1510,40 @@
       lastTime = timestamp;
 
       if (gameActive) {
-        // 當開啟解題彈窗時，完全凍結所有隕石位移、玩家移動與碰撞檢測！
         if (!isPausedForQuiz) {
-          if (invincibilityTimer > 0) {
-            invincibilityTimer -= delta;
-          }
+          if (invincibilityTimer > 0) invincibilityTimer -= delta;
+          if (spreadLaserTimer > 0) spreadLaserTimer -= delta;
+          if (slowTimeTimer > 0) slowTimeTimer -= delta;
 
           updatePlayerMovement(delta);
           updateLasers(delta);
           updateAsteroids(delta);
           updateKnowledgeOrbs(delta);
+          updatePowerupPods(delta);
           updateParticles(delta);
           updateStars(delta);
 
+          // P0-2: 3D 能量防護罩顯現旋轉
+          if (shieldDomeMesh) {
+            if (invincibilityTimer > 0) {
+              shieldDomeMesh.visible = true;
+              shieldDomeMesh.rotation.y += 0.08;
+            } else {
+              shieldDomeMesh.visible = false;
+            }
+          }
+
+          // 定時生成解題智囊球 (7秒) 與 戰術寶箱 (12秒)
           orbSpawnTimer += delta;
           if (orbSpawnTimer >= 7.0) {
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
+          }
+
+          podSpawnTimer += delta;
+          if (podSpawnTimer >= 12.0) {
+            podSpawnTimer = 0;
+            spawnPowerupPod();
           }
         }
         updateHUD();
@@ -1396,6 +1594,7 @@
         boostEnergy = Math.max(0, boostEnergy - 35 * delta);
         camera.fov = THREE.MathUtils.lerp(camera.fov, 88, 0.1);
         sfx.playBoost();
+        createWarpParticles(); // P0-1: 產生曲速推進藍光尾跡粒子
       } else {
         boostEnergy = Math.min(100, boostEnergy + 15 * delta);
         camera.fov = THREE.MathUtils.lerp(camera.fov, 75, 0.1);
@@ -1408,6 +1607,11 @@
       for (let i = lasers.length - 1; i >= 0; i--) {
         const laser = lasers[i];
         laser.position.z -= laserSpeed * delta;
+        
+        // 斜向擴散彈角度計算
+        if (laser.userData.angle) {
+          laser.position.x += laser.userData.angle * laserSpeed * delta;
+        }
 
         let hit = false;
         for (let j = asteroids.length - 1; j >= 0; j--) {
@@ -1442,6 +1646,21 @@
           }
         }
 
+        if (!hit) {
+          for (let m = powerupPods.length - 1; m >= 0; m--) {
+            const pod = powerupPods[m];
+            const distPod = Math.hypot(laser.position.x - pod.position.x, laser.position.y - pod.position.y);
+            if (Math.abs(laser.position.z - pod.position.z) < 4.0 && distPod < 4.2) {
+              applyPowerupBuff(pod.userData.type);
+              createExplosion(pod.position.x, pod.position.y, pod.position.z, 0x00f0ff);
+              scene.remove(pod);
+              powerupPods.splice(m, 1);
+              hit = true;
+              break;
+            }
+          }
+        }
+
         if (hit || laser.position.z < -220) {
           scene.remove(laser);
           lasers.splice(i, 1);
@@ -1450,9 +1669,11 @@
     }
 
     function updateAsteroids(delta) {
-      const baseSpeed = currentDifficulty === 'easy' ? 22 : (currentDifficulty === 'normal' ? 32 : 48);
-      const currentSpeed = isBoosting ? baseSpeed * 2.0 : baseSpeed;
+      let baseSpeed = currentDifficulty === 'easy' ? 22 : (currentDifficulty === 'normal' ? 32 : 48);
+      // P1-2: 時間減速鐘寶箱效果 (全場減速 50%)
+      if (slowTimeTimer > 0) baseSpeed *= 0.5;
 
+      const currentSpeed = isBoosting ? baseSpeed * 2.0 : baseSpeed;
       const maxAsteroids = currentDifficulty === 'easy' ? 5 : (currentDifficulty === 'normal' ? 8 : 11);
 
       distance += Math.round(currentSpeed * delta * 0.2);
@@ -1525,6 +1746,50 @@
       }
     }
 
+    function updatePowerupPods(delta) {
+      const currentSpeed = isBoosting ? 100 : 45;
+      for (let i = powerupPods.length - 1; i >= 0; i--) {
+        const pod = powerupPods[i];
+        pod.position.z += currentSpeed * delta;
+        pod.rotation.y += pod.rotationSpeed;
+
+        if (pod.position.z > -35 && pod.position.z < -2) {
+          pod.position.x = THREE.MathUtils.lerp(pod.position.x, playerPos.x, 0.08);
+          pod.position.y = THREE.MathUtils.lerp(pod.position.y, playerPos.y, 0.08);
+        }
+
+        const dist = Math.hypot(pod.position.x - playerPos.x, pod.position.y - playerPos.y);
+        
+        if (pod.position.z > -6.0 && pod.position.z < 6.0 && dist < 6.5) {
+          applyPowerupBuff(pod.userData.type);
+          createExplosion(pod.position.x, pod.position.y, pod.position.z, 0x00f0ff);
+          scene.remove(pod);
+          powerupPods.splice(i, 1);
+          continue;
+        }
+
+        if (pod.position.z > 10) {
+          scene.remove(pod);
+          powerupPods.splice(i, 1);
+        }
+      }
+    }
+
+    /* 套用戰術寶箱 BUFF 獎勵 */
+    function applyPowerupBuff(type) {
+      sfx.playCollect();
+      if (type === 'shield') {
+        shield = Math.min(100, shield + 30);
+        showWarningBanner("🛡️ 獲得【能量護盾補給】！護盾 +30%！");
+      } else if (type === 'spread') {
+        spreadLaserTimer = 10.0;
+        showWarningBanner("💥 啟動【三向散彈火砲】！火力持續 10 秒！");
+      } else if (type === 'slow') {
+        slowTimeTimer = 8.0;
+        showWarningBanner("⏳ 觸發【時間減速鐘】！全場隕石減速 8 秒！");
+      }
+    }
+
     function updateParticles(delta) {
       for (let i = particles.length - 1; i >= 0; i--) {
         const pSystem = particles[i];
@@ -1554,7 +1819,7 @@
 
     function updateStars(delta) {
       const pos = starGeo.attributes.position;
-      const speed = isBoosting ? 190 : 45;
+      const speed = isBoosting ? 320 : (slowTimeTimer > 0 ? 25 : 45);
       for (let i = 0; i < starCount; i++) {
         let z = pos.getZ(i);
         z += speed * delta;
@@ -1589,6 +1854,20 @@
 
       const comboEl = document.getElementById('combo-badge');
       if (comboEl) comboEl.innerText = comboCount > 1 ? `x${comboCount} COMBO!` : '';
+
+      const buffEl = document.getElementById('buff-badge');
+      if (buffEl) {
+        let activeBuffs = [];
+        if (spreadLaserTimer > 0) activeBuffs.push(`💥散彈 ${Math.ceil(spreadLaserTimer)}s`);
+        if (slowTimeTimer > 0) activeBuffs.push(`⏳減速 ${Math.ceil(slowTimeTimer)}s`);
+        
+        if (activeBuffs.length > 0) {
+          buffEl.style.display = 'inline-block';
+          buffEl.innerText = activeBuffs.join(' | ');
+        } else {
+          buffEl.style.display = 'none';
+        }
+      }
     }
 
     /* EDUCATIONAL QUIZ & STRATEGY SYSTEM */
@@ -1600,7 +1879,8 @@
       document.getElementById('quiz-exp-box').style.display = 'none';
       quizModal.classList.remove('hidden');
 
-      currentActiveQuiz = QUIZ_BANK[Math.floor(Math.random() * QUIZ_BANK.length)];
+      const activeBank = QUIZ_BANKS[currentCategory] || QUIZ_BANKS.astro;
+      currentActiveQuiz = activeBank[Math.floor(Math.random() * activeBank.length)];
       document.getElementById('quiz-q-text').innerText = currentActiveQuiz.q;
 
       const optsContainer = document.getElementById('quiz-options');
@@ -1648,7 +1928,7 @@
     function closeQuizModal() {
       document.getElementById('quiz-modal').classList.add('hidden');
       isPausedForQuiz = false;
-      invincibilityTimer = 1.5; // 關閉對話框、恢復飛行時，給予 1.5 秒無敵防護反應時間！
+      invincibilityTimer = 1.5;
     }
 
     function showWarningBanner(msg) {
@@ -1676,7 +1956,10 @@
       quizCorrectCount = 0;
       comboCount = 0;
       orbSpawnTimer = 0;
+      podSpawnTimer = 0;
       invincibilityTimer = 0;
+      spreadLaserTimer = 0;
+      slowTimeTimer = 0;
       playerPos.x = 0;
       playerPos.y = 0;
       playerVel.x = 0;
@@ -1685,10 +1968,12 @@
       asteroids.forEach(a => scene.remove(a));
       lasers.forEach(l => scene.remove(l));
       knowledgeOrbs.forEach(k => scene.remove(k));
+      powerupPods.forEach(p => scene.remove(p));
       particles.forEach(p => scene.remove(p));
       asteroids = [];
       lasers = [];
       knowledgeOrbs = [];
+      powerupPods = [];
       particles = [];
 
       const initialCount = currentDifficulty === 'easy' ? 4 : 6;
