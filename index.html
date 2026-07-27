@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072709">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072709">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072710">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072710">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072709">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072710">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072709">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072709">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072709">
-  <link rel="manifest" href="./manifest.json?v=2026072709">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072710">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072710">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072710">
+  <link rel="manifest" href="./manifest.json?v=2026072710">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -669,7 +669,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.09";
+    const APP_VERSION = "2026.07.27.10";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -996,6 +996,7 @@
     let comboCount = 0;
     let lastFireTime = 0;
     let orbSpawnTimer = 0;
+    let invincibilityTimer = 0; // 無敵時間冷卻 (受創保護)
 
     const playerPos = { x: 0, y: 0 };
     const playerVel = { x: 0, y: 0 };
@@ -1085,8 +1086,9 @@
       scene.add(cockpitGroup);
     }
 
+    /* 調整隕石適中體積與寬廣間隔 (黃金比例難度) */
     function createAsteroidMesh() {
-      const radius = Math.random() * 2.2 + 1.8;
+      const radius = Math.random() * 1.2 + 1.0; // 體積適中 1.0 ~ 2.2，不再塞爆視野
       const geometry = new THREE.DodecahedronGeometry(radius, 1);
       
       const posAttr = geometry.attributes.position;
@@ -1094,7 +1096,7 @@
         const x = posAttr.getX(i);
         const y = posAttr.getY(i);
         const z = posAttr.getZ(i);
-        const offset = (Math.random() - 0.5) * 0.5;
+        const offset = (Math.random() - 0.5) * 0.4;
         posAttr.setXYZ(i, x + offset, y + offset, z + offset);
       }
       geometry.computeVertexNormals();
@@ -1124,9 +1126,9 @@
       mesh.add(wireframe);
 
       mesh.rotationSpeed = {
-        x: (Math.random() - 0.5) * 0.06,
-        y: (Math.random() - 0.5) * 0.06,
-        z: (Math.random() - 0.5) * 0.06
+        x: (Math.random() - 0.5) * 0.05,
+        y: (Math.random() - 0.5) * 0.05,
+        z: (Math.random() - 0.5) * 0.05
       };
       mesh.radius = radius;
       return mesh;
@@ -1136,7 +1138,6 @@
     function createKnowledgeOrb() {
       const orbGroup = new THREE.Group();
 
-      // 1. 中央超級發光的霓虹金紫色寶球
       const sphereGeo = new THREE.SphereGeometry(2.6, 16, 16);
       const sphereMat = new THREE.MeshPhongMaterial({
         color: 0xc084fc,
@@ -1149,14 +1150,12 @@
       const coreSphere = new THREE.Mesh(sphereGeo, sphereMat);
       orbGroup.add(coreSphere);
 
-      // 2. 外圍雙重旋轉光環 (Satellite Rings)
       const ringGeo = new THREE.RingGeometry(3.2, 3.8, 24);
       const ringMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
       const ring = new THREE.Mesh(ringGeo, ringMat);
       ring.rotation.x = Math.PI / 3;
       orbGroup.add(ring);
 
-      // 3. 3D 浮空問號圖示 Canvas Sprite (`❓`)
       const canvas = document.createElement('canvas');
       canvas.width = 256; canvas.height = 256;
       const ctx = canvas.getContext('2d');
@@ -1233,17 +1232,18 @@
 
     function spawnAsteroid(customZ = null) {
       const mesh = createAsteroidMesh();
-      mesh.position.x = (Math.random() - 0.5) * 22;
-      mesh.position.y = (Math.random() - 0.5) * 14;
-      mesh.position.z = customZ !== null ? customZ : (-40 - Math.random() * 50);
+      // 加寬生成通道 (x: -16 ~ +16, y: -10 ~ +10)，留出豐富的避險迴廊
+      mesh.position.x = (Math.random() - 0.5) * 32;
+      mesh.position.y = (Math.random() - 0.5) * 20;
+      mesh.position.z = customZ !== null ? customZ : (-60 - Math.random() * 60);
       scene.add(mesh);
       asteroids.push(mesh);
     }
 
     function spawnKnowledgeOrb(customZ = null) {
       const orb = createKnowledgeOrb();
-      orb.position.x = (Math.random() - 0.5) * 8; // 精準放於飛船視野中間航向 x: -4~4
-      orb.position.y = (Math.random() - 0.5) * 5;  // 精準放於飛船視野中間航向 y: -2.5~2.5
+      orb.position.x = (Math.random() - 0.5) * 8;
+      orb.position.y = (Math.random() - 0.5) * 5;
       orb.position.z = customZ !== null ? customZ : -45;
       scene.add(orb);
       knowledgeOrbs.push(orb);
@@ -1332,6 +1332,10 @@
       if (gameActive) {
         const gameDelta = isPausedForQuiz ? delta * 0.1 : delta;
 
+        if (invincibilityTimer > 0) {
+          invincibilityTimer -= gameDelta;
+        }
+
         updatePlayerMovement(gameDelta);
         updateLasers(gameDelta);
         updateAsteroids(gameDelta);
@@ -1342,7 +1346,7 @@
 
         if (!isPausedForQuiz) {
           orbSpawnTimer += delta;
-          if (orbSpawnTimer >= 10.0) {
+          if (orbSpawnTimer >= 7.0) { // 提高發光問號智囊球出現頻率 (每 7 秒登場)
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
           }
@@ -1354,7 +1358,7 @@
 
     function updatePlayerMovement(delta) {
       if (!isTouchDragging) {
-        let speedFactor = 12;
+        let speedFactor = 14;
         let moveX = 0;
         let moveY = 0;
 
@@ -1408,7 +1412,6 @@
         laser.position.z -= laserSpeed * delta;
 
         let hit = false;
-        // 檢查雷射擊中隕石
         for (let j = asteroids.length - 1; j >= 0; j--) {
           const ast = asteroids[j];
           const dist = Math.hypot(laser.position.x - ast.position.x, laser.position.y - ast.position.y);
@@ -1425,18 +1428,17 @@
           }
         }
 
-        // 雙重機制：雷射也能直接擊中「問號解題智囊球」並觸發解題！
         if (!hit) {
           for (let k = knowledgeOrbs.length - 1; k >= 0; k--) {
             const orb = knowledgeOrbs[k];
             const distOrb = Math.hypot(laser.position.x - orb.position.x, laser.position.y - orb.position.y);
             if (Math.abs(laser.position.z - orb.position.z) < 4.0 && distOrb < 4.2) {
               sfx.playCollect();
-              createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xfacc15); // 金黃解題火花
+              createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xfacc15);
               scene.remove(orb);
               knowledgeOrbs.splice(k, 1);
               hit = true;
-              triggerQuizModal(); // 射擊命中觸發解題！
+              triggerQuizModal();
               break;
             }
           }
@@ -1449,14 +1451,19 @@
       }
     }
 
+    /* 難度大調整：降低隕石總量與飛行速度，並新增撞擊無敵時間保護 (iFrame) */
     function updateAsteroids(delta) {
-      const baseSpeed = currentDifficulty === 'easy' ? 45 : (currentDifficulty === 'normal' ? 68 : 95);
-      const currentSpeed = isBoosting ? baseSpeed * 2.2 : baseSpeed;
+      // 大幅降低基礎飛行速度，初階 22 / 中階 32 / 高階 48 (友善適中)
+      const baseSpeed = currentDifficulty === 'easy' ? 22 : (currentDifficulty === 'normal' ? 32 : 48);
+      const currentSpeed = isBoosting ? baseSpeed * 2.0 : baseSpeed;
+
+      // 降低隕石最大數量 (初階 5 個 / 中階 8 個 / 高階 11 個)
+      const maxAsteroids = currentDifficulty === 'easy' ? 5 : (currentDifficulty === 'normal' ? 8 : 11);
 
       distance += Math.round(currentSpeed * delta * 0.2);
       score += Math.round((isBoosting ? 25 : 10) * delta * 10);
 
-      if (asteroids.length < 16) {
+      if (asteroids.length < maxAsteroids) {
         spawnAsteroid();
       }
 
@@ -1468,14 +1475,17 @@
         ast.rotation.y += ast.rotationSpeed.y;
 
         const distToShip = Math.hypot(ast.position.x - playerPos.x, ast.position.y - playerPos.y);
-        if (ast.position.z > -2.5 && ast.position.z < 2.5 && distToShip < (ast.radius + 0.8)) {
+        
+        // 撞擊判斷 (加入無敵防護冷卻機制)
+        if (ast.position.z > -2.5 && ast.position.z < 2.5 && distToShip < (ast.radius + 0.6)) {
           createExplosion(ast.position.x, ast.position.y, ast.position.z, 0xff0055);
           scene.remove(ast);
           asteroids.splice(i, 1);
 
           comboCount = 0;
-          if (!isBoosting) {
-            shield -= 25;
+          if (!isBoosting && invincibilityTimer <= 0) {
+            shield -= 12; // 大幅降低一次扣血量 (從 25% 降為 12%)
+            invincibilityTimer = 1.2; // 給予 1.2 秒撞擊無敵防護時間！
             if (shield <= 0) {
               triggerGameOver("飛船受創過重，護盾歸零！");
             }
@@ -1491,15 +1501,13 @@
       }
     }
 
-    /* 磁吸+超大範圍觸發機制：問號解題智囊球 */
     function updateKnowledgeOrbs(delta) {
-      const currentSpeed = isBoosting ? 120 : 55;
+      const currentSpeed = isBoosting ? 100 : 45;
       for (let i = knowledgeOrbs.length - 1; i >= 0; i--) {
         const orb = knowledgeOrbs[i];
         orb.position.z += currentSpeed * delta;
         orb.rotation.y += orb.rotationSpeed;
 
-        // 磁吸效果：當接近飛船時，解題球會自動被飛船磁吸靠攏！
         if (orb.position.z > -35 && orb.position.z < -2) {
           orb.position.x = THREE.MathUtils.lerp(orb.position.x, playerPos.x, 0.08);
           orb.position.y = THREE.MathUtils.lerp(orb.position.y, playerPos.y, 0.08);
@@ -1507,13 +1515,12 @@
 
         const dist = Math.hypot(orb.position.x - playerPos.x, orb.position.y - playerPos.y);
         
-        // 磁吸吸收碰撞：輕鬆觸發解題 modal！
         if (orb.position.z > -6.0 && orb.position.z < 6.0 && dist < 6.5) {
           sfx.playCollect();
-          createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xfacc15); // 金閃閃火花
+          createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xfacc15);
           scene.remove(orb);
           knowledgeOrbs.splice(i, 1);
-          triggerQuizModal(); // 100% 成功開題！
+          triggerQuizModal();
           continue;
         }
 
@@ -1574,7 +1581,15 @@
       if (shieldValEl) shieldValEl.innerText = `${Math.max(0, Math.round(shield))}%`;
 
       const shieldBarEl = document.getElementById('shield-bar');
-      if (shieldBarEl) shieldBarEl.style.width = `${Math.max(0, shield)}%`;
+      if (shieldBarEl) {
+        shieldBarEl.style.width = `${Math.max(0, shield)}%`;
+        // 無敵時間提示閃爍
+        if (invincibilityTimer > 0) {
+          shieldBarEl.style.background = 'linear-gradient(90deg, #ff0055, #facc15)';
+        } else {
+          shieldBarEl.style.background = 'linear-gradient(90deg, #00f0ff, #3b82f6)';
+        }
+      }
 
       const boostMeterEl = document.getElementById('boost-meter');
       if (boostMeterEl) boostMeterEl.style.width = `${Math.max(0, boostEnergy)}%`;
@@ -1667,6 +1682,7 @@
       quizCorrectCount = 0;
       comboCount = 0;
       orbSpawnTimer = 0;
+      invincibilityTimer = 0;
       playerPos.x = 0;
       playerPos.y = 0;
       playerVel.x = 0;
@@ -1681,12 +1697,12 @@
       knowledgeOrbs = [];
       particles = [];
 
-      for (let i = 0; i < 16; i++) {
-        spawnAsteroid(-15 - i * 4);
+      const initialCount = currentDifficulty === 'easy' ? 4 : 6;
+      for (let i = 0; i < initialCount; i++) {
+        spawnAsteroid(-25 - i * 10);
       }
 
-      // 開局 1.5 秒預先放一顆醒目「問號解題智囊球」在視線前方！
-      spawnKnowledgeOrb(-22);
+      spawnKnowledgeOrb(-20);
     }
 
     function triggerGameOver(reason) {
