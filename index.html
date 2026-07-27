@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072710">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072710">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072711">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072711">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072710">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072711">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072710">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072710">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072710">
-  <link rel="manifest" href="./manifest.json?v=2026072710">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072711">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072711">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072711">
+  <link rel="manifest" href="./manifest.json?v=2026072711">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -320,7 +320,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 16px;
+      padding: clamp(16px, 3vw, 36px);
       text-align: center;
       transition: opacity 0.3s ease;
     }
@@ -330,16 +330,17 @@
       pointer-events: none;
     }
 
+    /* 電腦端與行動端全面 RWD 擴大清晰設計 */
     .modal-card {
-      background: rgba(13, 24, 48, 0.94);
-      border: 2px solid rgba(0, 240, 255, 0.5);
-      border-radius: 24px;
-      padding: clamp(20px, 4vw, 36px);
-      max-width: 580px;
+      background: rgba(13, 24, 48, 0.95);
+      border: 2px solid rgba(0, 240, 255, 0.6);
+      border-radius: 28px;
+      padding: clamp(24px, 4vw, 44px);
+      max-width: min(960px, 94vw); /* 從 580px 大幅升級為 960px */
       width: 95%;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 240, 255, 0.25);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.85), 0 0 60px rgba(0, 240, 255, 0.3);
       animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     @keyframes modalPop {
@@ -349,57 +350,59 @@
 
     .game-title {
       font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-      font-size: clamp(22px, 5vw, 34px);
+      font-size: clamp(26px, 4.5vw, 42px);
       font-weight: 900;
       background: linear-gradient(135deg, #00f0ff, #a855f7, #ff0055);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-      text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+      margin-bottom: 12px;
+      text-shadow: 0 0 24px rgba(0, 240, 255, 0.4);
     }
 
     .subtitle {
-      font-size: 14px;
-      color: #94a3b8;
-      margin-bottom: 20px;
-      line-height: 1.5;
+      font-size: clamp(14px, 1.8vw, 17px);
+      color: #cbd5e1;
+      margin-bottom: 26px;
+      line-height: 1.6;
     }
 
     .instructions-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 寬敞明亮的 2x2 或 4 欄佈局 */
+      gap: 14px;
+      margin-bottom: 26px;
       text-align: left;
     }
     .inst-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 10px;
-      border-radius: 12px;
-      font-size: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: clamp(13px, 1.4vw, 15px);
+      line-height: 1.6;
     }
     .inst-card strong {
       color: #00f0ff;
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 6px;
+      font-size: clamp(14px, 1.5vw, 16px);
     }
 
     .difficulty-select {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
     .diff-btn {
       flex: 1;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 16px;
       color: #cbd5e1;
-      font-weight: 700;
-      font-size: 13px;
+      font-weight: 800;
+      font-size: clamp(14px, 1.5vw, 16px);
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -407,27 +410,27 @@
       background: rgba(0, 240, 255, 0.25);
       border-color: #00f0ff;
       color: #00f0ff;
-      box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
     }
 
     .btn-main {
       background: linear-gradient(135deg, #00f0ff, #3b82f6);
       color: #030712;
-      font-size: 17px;
+      font-size: clamp(17px, 2vw, 22px);
       font-weight: 900;
-      padding: 12px 36px;
+      padding: 14px 48px;
       border: none;
-      border-radius: 40px;
+      border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 0 28px rgba(0, 240, 255, 0.6);
+      box-shadow: 0 0 32px rgba(0, 240, 255, 0.7);
       transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .btn-main:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 38px rgba(0, 240, 255, 0.9);
+      box-shadow: 0 0 42px rgba(0, 240, 255, 0.95);
     }
 
     .quiz-card {
@@ -669,7 +672,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.10";
+    const APP_VERSION = "2026.07.27.11";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -996,7 +999,7 @@
     let comboCount = 0;
     let lastFireTime = 0;
     let orbSpawnTimer = 0;
-    let invincibilityTimer = 0; // 無敵時間冷卻 (受創保護)
+    let invincibilityTimer = 0;
 
     const playerPos = { x: 0, y: 0 };
     const playerVel = { x: 0, y: 0 };
@@ -1086,9 +1089,8 @@
       scene.add(cockpitGroup);
     }
 
-    /* 調整隕石適中體積與寬廣間隔 (黃金比例難度) */
     function createAsteroidMesh() {
-      const radius = Math.random() * 1.2 + 1.0; // 體積適中 1.0 ~ 2.2，不再塞爆視野
+      const radius = Math.random() * 1.2 + 1.0;
       const geometry = new THREE.DodecahedronGeometry(radius, 1);
       
       const posAttr = geometry.attributes.position;
@@ -1134,7 +1136,6 @@
       return mesh;
     }
 
-    /* 醒目 3D 問號解題智囊球 (Glowing Question Mark Knowledge Orb) */
     function createKnowledgeOrb() {
       const orbGroup = new THREE.Group();
 
@@ -1232,7 +1233,6 @@
 
     function spawnAsteroid(customZ = null) {
       const mesh = createAsteroidMesh();
-      // 加寬生成通道 (x: -16 ~ +16, y: -10 ~ +10)，留出豐富的避險迴廊
       mesh.position.x = (Math.random() - 0.5) * 32;
       mesh.position.y = (Math.random() - 0.5) * 20;
       mesh.position.z = customZ !== null ? customZ : (-60 - Math.random() * 60);
@@ -1346,7 +1346,7 @@
 
         if (!isPausedForQuiz) {
           orbSpawnTimer += delta;
-          if (orbSpawnTimer >= 7.0) { // 提高發光問號智囊球出現頻率 (每 7 秒登場)
+          if (orbSpawnTimer >= 7.0) {
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
           }
@@ -1451,13 +1451,10 @@
       }
     }
 
-    /* 難度大調整：降低隕石總量與飛行速度，並新增撞擊無敵時間保護 (iFrame) */
     function updateAsteroids(delta) {
-      // 大幅降低基礎飛行速度，初階 22 / 中階 32 / 高階 48 (友善適中)
       const baseSpeed = currentDifficulty === 'easy' ? 22 : (currentDifficulty === 'normal' ? 32 : 48);
       const currentSpeed = isBoosting ? baseSpeed * 2.0 : baseSpeed;
 
-      // 降低隕石最大數量 (初階 5 個 / 中階 8 個 / 高階 11 個)
       const maxAsteroids = currentDifficulty === 'easy' ? 5 : (currentDifficulty === 'normal' ? 8 : 11);
 
       distance += Math.round(currentSpeed * delta * 0.2);
@@ -1476,7 +1473,6 @@
 
         const distToShip = Math.hypot(ast.position.x - playerPos.x, ast.position.y - playerPos.y);
         
-        // 撞擊判斷 (加入無敵防護冷卻機制)
         if (ast.position.z > -2.5 && ast.position.z < 2.5 && distToShip < (ast.radius + 0.6)) {
           createExplosion(ast.position.x, ast.position.y, ast.position.z, 0xff0055);
           scene.remove(ast);
@@ -1484,8 +1480,8 @@
 
           comboCount = 0;
           if (!isBoosting && invincibilityTimer <= 0) {
-            shield -= 12; // 大幅降低一次扣血量 (從 25% 降為 12%)
-            invincibilityTimer = 1.2; // 給予 1.2 秒撞擊無敵防護時間！
+            shield -= 12;
+            invincibilityTimer = 1.2;
             if (shield <= 0) {
               triggerGameOver("飛船受創過重，護盾歸零！");
             }
@@ -1583,7 +1579,6 @@
       const shieldBarEl = document.getElementById('shield-bar');
       if (shieldBarEl) {
         shieldBarEl.style.width = `${Math.max(0, shield)}%`;
-        // 無敵時間提示閃爍
         if (invincibilityTimer > 0) {
           shieldBarEl.style.background = 'linear-gradient(90deg, #ff0055, #facc15)';
         } else {
