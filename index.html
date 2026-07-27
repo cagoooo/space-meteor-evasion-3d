@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072702">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072702">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072703">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072703">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072702">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072703">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072702">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072702">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072702">
-  <link rel="manifest" href="./manifest.json?v=2026072702">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072703">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072703">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072703">
+  <link rel="manifest" href="./manifest.json?v=2026072703">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -193,7 +193,7 @@
       transition: width 0.1s linear;
     }
 
-    /* Top Action Bar Buttons (BGM & Trigger Quiz) */
+    /* Top Action Bar Buttons */
     .top-action-bar {
       display: flex;
       gap: 8px;
@@ -225,15 +225,15 @@
       position: absolute;
       top: 15%; left: 50%;
       transform: translateX(-50%) scale(0.9);
-      background: rgba(168, 85, 247, 0.9);
-      border: 2px solid #a855f7;
+      background: rgba(255, 0, 85, 0.9);
+      border: 2px solid #ff0055;
       color: #fff;
       padding: 10px 24px;
       border-radius: 30px;
       font-size: clamp(14px, 3.5vw, 17px);
       font-weight: 900;
       letter-spacing: 1px;
-      box-shadow: 0 0 35px rgba(168, 85, 247, 0.9);
+      box-shadow: 0 0 35px rgba(255, 0, 85, 0.9);
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       pointer-events: none;
@@ -282,7 +282,6 @@
       margin-left: auto;
     }
 
-    /* 支援滑鼠點擊與手機觸控的對應按鈕 */
     .btn-touch {
       width: clamp(70px, 16vw, 84px);
       height: clamp(70px, 16vw, 84px);
@@ -609,7 +608,7 @@
         </div>
         <div class="inst-card">
           <strong>🌌 知識解題關卡</strong>
-          每 12 秒出現發光紫晶體，點擊右上【星際解題】隨時學習補血！
+          收集發光紫晶體，點擊右上【星際解題】隨時學習補血！
         </div>
         <div class="inst-card">
           <strong>🎵 Suno AI 音效與 BGM</strong>
@@ -681,7 +680,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.02";
+    const APP_VERSION = "2026.07.27.03";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -762,7 +761,7 @@
       }
     }
 
-    /* === WEB AUDIO & SUNO STYLE BGM ENGINE === */
+    /* WEB AUDIO & SUNO STYLE BGM ENGINE */
     class SoundFx {
       constructor() {
         this.ctx = null;
@@ -842,17 +841,15 @@
         osc.start(); osc.stop(now + 0.4);
       }
 
-      /* Suno Retro Space Synth BGM Generator */
       startSunoBGM() {
         if (this.bgmInterval || !this.bgmEnabled) return;
         this.init();
 
-        const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63]; // C3, D3, E3, G3, A3, C4
+        const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63];
         this.bgmInterval = setInterval(() => {
           if (!this.bgmEnabled || !this.ctx) return;
           const now = this.ctx.currentTime;
           
-          // Bass Pulse
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'sawtooth';
@@ -868,7 +865,7 @@
           gain.connect(this.ctx.destination);
           osc.start();
           osc.stop(now + 0.22);
-        }, 240); // 125 BPM synth loop
+        }, 240);
       }
 
       stopSunoBGM() {
@@ -998,7 +995,7 @@
     function initThree() {
       const container = document.getElementById('game-canvas');
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x020208, 0.007);
+      scene.fog = new THREE.FogExp2(0x020208, 0.003); // 降低霧氣密度，大幅提升遠處隕石清晰度！
 
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 0, 0);
@@ -1007,13 +1004,13 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      scene.add(new THREE.AmbientLight(0xffffff, 0.85)); // 提升環境光照亮度
 
-      const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.3);
+      const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.6);
       dirLight.position.set(10, 20, 10);
       scene.add(dirLight);
 
-      const pointLight = new THREE.PointLight(0xa855f7, 1.8, 60);
+      const pointLight = new THREE.PointLight(0xa855f7, 2.0, 80);
       pointLight.position.set(-10, -10, -20);
       scene.add(pointLight);
 
@@ -1037,7 +1034,7 @@
       
       const starMat = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 0.9,
+        size: 1.0,
         transparent: true,
         opacity: 0.85
       });
@@ -1066,7 +1063,7 @@
     }
 
     function createAsteroidMesh() {
-      const radius = Math.random() * 1.6 + 1.2;
+      const radius = Math.random() * 1.8 + 1.4; // 增大隕石尺寸，更加醒目！
       const geometry = new THREE.DodecahedronGeometry(radius, 1);
       
       const posAttr = geometry.attributes.position;
@@ -1079,38 +1076,39 @@
       }
       geometry.computeVertexNormals();
 
-      const colors = [0x64748b, 0x475569, 0x334155, 0x78716c, 0x52525b];
+      const colors = [0x94a3b8, 0x64748b, 0x475569, 0x52525b, 0x78716c];
       const color = colors[Math.floor(Math.random() * colors.length)];
       
       const material = new THREE.MeshStandardMaterial({
         color: color,
-        roughness: 0.85,
-        metalness: 0.25,
+        emissive: 0x1e293b, // 增加適度自發光，確保在深空依然清晰可見！
+        roughness: 0.7,
+        metalness: 0.3,
         flatShading: true
       });
 
       const mesh = new THREE.Mesh(geometry, material);
       mesh.rotationSpeed = {
-        x: (Math.random() - 0.5) * 0.04,
-        y: (Math.random() - 0.5) * 0.04,
-        z: (Math.random() - 0.5) * 0.04
+        x: (Math.random() - 0.5) * 0.05,
+        y: (Math.random() - 0.5) * 0.05,
+        z: (Math.random() - 0.5) * 0.05
       };
       mesh.radius = radius;
       return mesh;
     }
 
     function createKnowledgeOrb() {
-      const geo = new THREE.OctahedronGeometry(1.8, 0);
+      const geo = new THREE.OctahedronGeometry(2.0, 0);
       const mat = new THREE.MeshPhongMaterial({
-        color: 0xc084fc,
-        emissive: 0xa855f7,
+        color: 0xd8b4fe,
+        emissive: 0xc084fc,
         shininess: 100,
         flatShading: true,
         transparent: true,
         opacity: 0.95
       });
       const orb = new THREE.Mesh(geo, mat);
-      orb.rotationSpeed = 0.045;
+      orb.rotationSpeed = 0.05;
       return orb;
     }
 
@@ -1136,7 +1134,7 @@
 
     function createExplosion(x, y, z, colorHex = 0xff5500) {
       sfx.playExplosion();
-      const count = 40;
+      const count = 45;
       const pGeo = new THREE.BufferGeometry();
       const positions = new Float32Array(count * 3);
       const pVels = [];
@@ -1146,9 +1144,9 @@
         positions[i * 3 + 1] = y;
         positions[i * 3 + 2] = z;
         pVels.push({
-          x: (Math.random() - 0.5) * 1.4,
-          y: (Math.random() - 0.5) * 1.4,
-          z: (Math.random() - 0.5) * 1.4,
+          x: (Math.random() - 0.5) * 1.5,
+          y: (Math.random() - 0.5) * 1.5,
+          z: (Math.random() - 0.5) * 1.5,
           life: 1.0
         });
       }
@@ -1156,7 +1154,7 @@
       pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       const pMat = new THREE.PointsMaterial({
         color: colorHex,
-        size: 1.6,
+        size: 1.8,
         transparent: true,
         opacity: 1
       });
@@ -1167,11 +1165,12 @@
       particles.push(pSystem);
     }
 
-    function spawnAsteroid() {
+    /* 核心修復：隕石高頻穩定生成（近距離 z = -80 到 -150） */
+    function spawnAsteroid(customZ = null) {
       const mesh = createAsteroidMesh();
-      mesh.position.x = (Math.random() - 0.5) * 38;
-      mesh.position.y = (Math.random() - 0.5) * 26;
-      mesh.position.z = -190 - Math.random() * 40;
+      mesh.position.x = (Math.random() - 0.5) * 36;
+      mesh.position.y = (Math.random() - 0.5) * 24;
+      mesh.position.z = customZ !== null ? customZ : (-90 - Math.random() * 60);
       scene.add(mesh);
       asteroids.push(mesh);
     }
@@ -1180,13 +1179,12 @@
       const orb = createKnowledgeOrb();
       orb.position.x = (Math.random() - 0.5) * 16;
       orb.position.y = (Math.random() - 0.5) * 12;
-      orb.position.z = -160;
+      orb.position.z = -120;
       scene.add(orb);
       knowledgeOrbs.push(orb);
       showWarningBanner("🌌 發現星際解題晶體！靠近收集解題領獎！");
     }
 
-    /* 全平台操控相容事件 (Desktop Mouse Click + Keyboard + Touch) */
     function setupControls() {
       window.addEventListener('keydown', (e) => {
         if (!gameActive || isPausedForQuiz) return;
@@ -1209,7 +1207,6 @@
 
       const canvas = document.getElementById('game-canvas');
 
-      // 全屏觸控滑動
       canvas.addEventListener('touchstart', (e) => {
         if (!gameActive || isPausedForQuiz) return;
         sfx.init();
@@ -1234,7 +1231,6 @@
       canvas.addEventListener('touchend', endTouchDrag);
       canvas.addEventListener('touchcancel', endTouchDrag);
 
-      /* 電腦滑鼠點擊 + 手觸多平台綁定 */
       const btnFire = document.getElementById('btn-touch-fire');
       const handleFire = (e) => {
         if (e) e.preventDefault();
@@ -1268,20 +1264,24 @@
       const delta = Math.min((timestamp - lastTime) / 1000, 0.1);
       lastTime = timestamp;
 
-      if (gameActive && !isPausedForQuiz) {
-        updatePlayerMovement(delta);
-        updateLasers(delta);
-        updateAsteroids(delta);
-        updateKnowledgeOrbs(delta);
-        updateParticles(delta);
-        updateStars(delta);
+      // 當開啟問答視窗時，背景畫面依然微速飄動更新，避免畫面卡死
+      if (gameActive) {
+        const gameDelta = isPausedForQuiz ? delta * 0.1 : delta; // 解題時 slow-motion 漂浮
+
+        updatePlayerMovement(gameDelta);
+        updateLasers(gameDelta);
+        updateAsteroids(gameDelta);
+        updateKnowledgeOrbs(gameDelta);
+        updateParticles(gameDelta);
+        updateStars(gameDelta);
         updateHUD();
 
-        // 頻率保障：每 10 秒必出一次解題晶體！
-        orbSpawnTimer += delta;
-        if (orbSpawnTimer >= 10.0) {
-          orbSpawnTimer = 0;
-          spawnKnowledgeOrb();
+        if (!isPausedForQuiz) {
+          orbSpawnTimer += delta;
+          if (orbSpawnTimer >= 12.0) {
+            orbSpawnTimer = 0;
+            spawnKnowledgeOrb();
+          }
         }
       }
 
@@ -1347,7 +1347,7 @@
         for (let j = asteroids.length - 1; j >= 0; j--) {
           const ast = asteroids[j];
           const dist = Math.hypot(laser.position.x - ast.position.x, laser.position.y - ast.position.y);
-          if (Math.abs(laser.position.z - ast.position.z) < 2.5 && dist < (ast.radius + 0.4)) {
+          if (Math.abs(laser.position.z - ast.position.z) < 3.0 && dist < (ast.radius + 0.5)) {
             createExplosion(ast.position.x, ast.position.y, ast.position.z, 0x00f0ff);
             scene.remove(ast);
             asteroids.splice(j, 1);
@@ -1367,15 +1367,16 @@
       }
     }
 
+    /* 修復：確保隕石源源不絕生成與移動 */
     function updateAsteroids(delta) {
-      const baseSpeed = currentDifficulty === 'easy' ? 42 : (currentDifficulty === 'normal' ? 65 : 90);
+      const baseSpeed = currentDifficulty === 'easy' ? 45 : (currentDifficulty === 'normal' ? 68 : 95);
       const currentSpeed = isBoosting ? baseSpeed * 2.2 : baseSpeed;
 
       distance += Math.round(currentSpeed * delta * 0.2);
       score += Math.round((isBoosting ? 25 : 10) * delta * 10);
 
-      const spawnChance = currentDifficulty === 'easy' ? 0.045 : (currentDifficulty === 'normal' ? 0.08 : 0.12);
-      if (Math.random() < spawnChance) {
+      // 高頻生成：維持場面上始終有 12 ~ 18 顆隕石！
+      if (asteroids.length < 15) {
         spawnAsteroid();
       }
 
@@ -1418,7 +1419,7 @@
         orb.rotation.y += orb.rotationSpeed;
 
         const dist = Math.hypot(orb.position.x - playerPos.x, orb.position.y - playerPos.y);
-        if (orb.position.z > -4 && orb.position.z < 4 && dist < 3.8) {
+        if (orb.position.z > -4 && orb.position.z < 4 && dist < 4.0) {
           sfx.playCollect();
           scene.remove(orb);
           knowledgeOrbs.splice(i, 1);
@@ -1580,9 +1581,11 @@
       lasers = [];
       knowledgeOrbs = [];
       particles = [];
-      
-      // 開局首秒立刻送上一顆解題晶體，讓學霸或少兒組能立刻看到體驗！
-      spawnKnowledgeOrb();
+
+      // 核心初始化：開局立即預先生成 16 顆近距離與中距離隕石，畫面開局就充滿震撼隕石群！
+      for (let i = 0; i < 16; i++) {
+        spawnAsteroid(-20 - i * 10);
+      }
     }
 
     function triggerGameOver(reason) {
