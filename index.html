@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072705">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072705">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072706">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072706">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072705">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072706">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072705">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072705">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072705">
-  <link rel="manifest" href="./manifest.json?v=2026072705">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072706">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072706">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072706">
+  <link rel="manifest" href="./manifest.json?v=2026072706">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -545,7 +545,7 @@
 
       <div class="hud-card shield-container">
         <div class="hud-title" style="display:flex; justify-content:space-between; align-items:center;">
-          <span>飛船能量護盾</span>
+          <span>飛船能量護盾 <strong id="hud-shield-val" style="color:#00f0ff; font-weight:900;">100%</strong></span>
           <div class="top-action-bar">
             <button class="btn-hud-action" id="btn-toggle-bgm" onclick="toggleBGM()">🎵 Suno BGM: 開</button>
             <button class="btn-hud-action" onclick="triggerQuizModal()">🌌 星際解題</button>
@@ -670,7 +670,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.05";
+    const APP_VERSION = "2026.07.27.06";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -989,7 +989,6 @@
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 0, 0);
 
-      // 強力艦載前探探照燈 (High-beam space headlight attached to camera)
       const headlight = new THREE.PointLight(0x00f0ff, 4.0, 150);
       headlight.position.set(0, 0, 0);
       camera.add(headlight);
@@ -999,7 +998,6 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // 環境強光照亮宇宙
       scene.add(new THREE.AmbientLight(0xffffff, 1.4));
 
       const dirLight1 = new THREE.DirectionalLight(0xffaa00, 2.0);
@@ -1058,9 +1056,8 @@
       scene.add(cockpitGroup);
     }
 
-    /* 炫彩高亮流星隕石模型 (Glowing High-Visibility Magma Meteorites) */
     function createAsteroidMesh() {
-      const radius = Math.random() * 2.2 + 1.8; // 大幅放大尺寸！
+      const radius = Math.random() * 2.2 + 1.8;
       const geometry = new THREE.DodecahedronGeometry(radius, 1);
       
       const posAttr = geometry.attributes.position;
@@ -1073,17 +1070,15 @@
       }
       geometry.computeVertexNormals();
 
-      // 鮮明熔岩與科技炫彩調色盤
       const palettes = [
-        { color: 0xff5500, emissive: 0xcc2200 }, // 熔岩火焰橘
-        { color: 0xff0055, emissive: 0xaa0033 }, // 爆裂深紅
-        { color: 0xfacc15, emissive: 0xb45309 }, // 隕星耀金
-        { color: 0x00f0ff, emissive: 0x0284c7 }, // 冰晶藍脈
-        { color: 0xa855f7, emissive: 0x7e22ce }  // 宇宙紫晶
+        { color: 0xff5500, emissive: 0xcc2200 },
+        { color: 0xff0055, emissive: 0xaa0033 },
+        { color: 0xfacc15, emissive: 0xb45309 },
+        { color: 0x00f0ff, emissive: 0x0284c7 },
+        { color: 0xa855f7, emissive: 0x7e22ce }
       ];
       const p = palettes[Math.floor(Math.random() * palettes.length)];
       
-      // 使用 MeshPhongMaterial 配合強烈自發光，100% 耀眼醒目！
       const material = new THREE.MeshPhongMaterial({
         color: p.color,
         emissive: p.emissive,
@@ -1094,7 +1089,6 @@
 
       const mesh = new THREE.Mesh(geometry, material);
 
-      // 加上外圍科技能量網格線，視覺震撼力 100%
       const wireGeo = new THREE.WireframeGeometry(geometry);
       const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 });
       const wireframe = new THREE.LineSegments(wireGeo, wireMat);
@@ -1183,11 +1177,10 @@
       particles.push(pSystem);
     }
 
-    /* 近距離高動態隕石生成：生成在 z = -20 到 -80 視野極近距離！ */
     function spawnAsteroid(customZ = null) {
       const mesh = createAsteroidMesh();
-      mesh.position.x = (Math.random() - 0.5) * 22; // 中央寬度 22
-      mesh.position.y = (Math.random() - 0.5) * 14; // 中央高度 14
+      mesh.position.x = (Math.random() - 0.5) * 22;
+      mesh.position.y = (Math.random() - 0.5) * 14;
       mesh.position.z = customZ !== null ? customZ : (-40 - Math.random() * 50);
       scene.add(mesh);
       asteroids.push(mesh);
@@ -1391,7 +1384,6 @@
       distance += Math.round(currentSpeed * delta * 0.2);
       score += Math.round((isBoosting ? 25 : 10) * delta * 10);
 
-      // 維持場面上固定 16 顆高亮震撼隕石！
       if (asteroids.length < 16) {
         spawnAsteroid();
       }
@@ -1489,15 +1481,25 @@
       pos.needsUpdate = true;
     }
 
+    /* 徹底防呆 null-safe 護盾與 HUD 更新 */
     function updateHUD() {
-      document.getElementById('hud-score').innerText = String(score).padStart(5, '0');
-      document.getElementById('hud-dist').innerText = `${(distance / 10).toFixed(1)} km`;
-      document.getElementById('hud-shield-val').innerText = `${Math.max(0, Math.round(shield))}%`;
-      document.getElementById('shield-bar').style.width = `${Math.max(0, shield)}%`;
-      document.getElementById('boost-meter').style.width = `${Math.max(0, boostEnergy)}%`;
-      
+      const scoreEl = document.getElementById('hud-score');
+      if (scoreEl) scoreEl.innerText = String(score).padStart(5, '0');
+
+      const distEl = document.getElementById('hud-dist');
+      if (distEl) distEl.innerText = `${(distance / 10).toFixed(1)} km`;
+
+      const shieldValEl = document.getElementById('hud-shield-val');
+      if (shieldValEl) shieldValEl.innerText = `${Math.max(0, Math.round(shield))}%`;
+
+      const shieldBarEl = document.getElementById('shield-bar');
+      if (shieldBarEl) shieldBarEl.style.width = `${Math.max(0, shield)}%`;
+
+      const boostMeterEl = document.getElementById('boost-meter');
+      if (boostMeterEl) boostMeterEl.style.width = `${Math.max(0, boostEnergy)}%`;
+
       const comboEl = document.getElementById('combo-badge');
-      comboEl.innerText = comboCount > 1 ? `x${comboCount} COMBO!` : '';
+      if (comboEl) comboEl.innerText = comboCount > 1 ? `x${comboCount} COMBO!` : '';
     }
 
     /* EDUCATIONAL QUIZ & STRATEGY SYSTEM */
@@ -1598,7 +1600,6 @@
       knowledgeOrbs = [];
       particles = [];
 
-      // 開局立刻生成 16 顆近距離 (z = -15 到 -75) 超大自發光熔岩隕石！
       for (let i = 0; i < 16; i++) {
         spawnAsteroid(-15 - i * 4);
       }
