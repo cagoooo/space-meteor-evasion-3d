@@ -1,0 +1,32 @@
+{
+  "name": "3D 星際雷霆大冒險",
+  "short_name": "星際雷霆",
+  "description": "適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#020208",
+  "background_color": "#020208",
+  "icons": [
+    {
+      "src": "favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

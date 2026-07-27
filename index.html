@@ -5,7 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>3D 星際雷霆：隕石防禦與太空探索解題大冒險</title>
   <meta name="description" content="適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲">
-  
+
+  <!-- Open Graph & Social Preview Meta -->
+  <meta property="og:site_name" content="3D 星際雷霆大冒險">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
+  <meta property="og:description" content="適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲">
+  <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072701">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072701">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="zh_TW">
+
+  <!-- Twitter Card Meta -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="3D 星際雷霆大冒險">
+  <meta name="twitter:description" content="適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072701">
+
+  <!-- Canonical Link -->
+  <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
+
+  <!-- Favicon & PWA Icons -->
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072701">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072701">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072701">
+  <link rel="manifest" href="./manifest.json?v=2026072701">
+  <meta name="theme-color" content="#020208">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -176,7 +204,7 @@
       transition: width 0.1s linear;
     }
 
-    /* Warning & Quiz Checkpoint Notification */
+    /* Notification Banner */
     .warning-banner {
       position: absolute;
       top: 15%;
@@ -202,7 +230,7 @@
       transform: translateX(-50%) scale(1);
     }
 
-    /* Mobile Touch Control Overlay & Gesture Hint */
+    /* Mobile Touch Control Overlay Hint */
     .mobile-controls {
       display: flex;
       width: 100%;
@@ -438,7 +466,6 @@
       border-color: #a855f7;
     }
 
-    /* 解題策略與知識解析說明框 */
     .quiz-explanation-box {
       display: none;
       background: rgba(168, 85, 247, 0.15);
@@ -619,7 +646,6 @@
       <div class="quiz-question" id="quiz-q-text">問答載入中...</div>
       <div class="quiz-options" id="quiz-options"></div>
 
-      <!-- 觀念解析與解題策略面板 -->
       <div class="quiz-explanation-box" id="quiz-exp-box">
         <div class="quiz-explanation-title">💡 觀念解析與解題策略</div>
         <div id="quiz-exp-text">解題說明內容...</div>
@@ -631,6 +657,88 @@
   </div>
 
   <script>
+    /* === PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION === */
+    const APP_VERSION = "2026.07.27.01";
+
+    function _showSwUpdateToast(waitingWorker) {
+      if (document.getElementById('sw-update-toast')) return;
+      const toast = document.createElement('div');
+      toast.id = 'sw-update-toast';
+      toast.setAttribute('role', 'alert');
+      toast.style.cssText = [
+        'position:fixed;left:50%;bottom:20px;z-index:99999',
+        'width:min(420px,calc(100vw - 28px));transform:translateX(-50%)',
+        'display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center',
+        'padding:14px 16px',
+        'background:#0a192f;color:#fff;border:1px solid #00f0ff;border-radius:18px',
+        'box-shadow:0 12px 40px rgba(0,240,255,0.4)',
+        'font-family:system-ui,-apple-system,sans-serif'
+      ].join(';');
+      
+      toast.innerHTML = `
+        <div style="min-width:0;">
+          <div style="font-size:14px;font-weight:900;color:#00f0ff;line-height:1.3;">✨ 發現新版本！</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.4;margin-top:2px;">點擊【立刻更新】載入最新星際遊戲與功能</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button id="sw-reload-btn" style="background:linear-gradient(135deg,#00f0ff,#3b82f6);color:#030712;border:none;border-radius:12px;padding:8px 14px;font-weight:900;cursor:pointer;font-size:13px;white-space:nowrap;">立刻更新</button>
+          <button class="sw-dismiss-btn" style="background:transparent;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:18px;padding:4px;">✕</button>
+        </div>
+      `;
+      document.body.appendChild(toast);
+
+      document.getElementById('sw-reload-btn').addEventListener('click', () => {
+        toast.remove();
+        if (waitingWorker) {
+          let _reloaded = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!_reloaded) { _reloaded = true; window.location.reload(); }
+          });
+          waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+        } else {
+          window.location.reload();
+        }
+      });
+      toast.querySelector('.sw-dismiss-btn').addEventListener('click', () => toast.remove());
+    }
+
+    if ('serviceWorker' in navigator) {
+      const isLocalhost = Boolean(
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '[::1]' ||
+        window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+      );
+
+      if (isLocalhost) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (let registration of registrations) { registration.unregister(); }
+        });
+      } else {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION, { updateViaCache: 'none' })
+            .then(reg => {
+              if (reg.waiting) { _showSwUpdateToast(reg.waiting); }
+              const _watchWorker = (worker) => {
+                worker.addEventListener('statechange', () => {
+                  if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                    _showSwUpdateToast(worker);
+                  }
+                });
+              };
+              if (reg.installing) _watchWorker(reg.installing);
+              reg.addEventListener('updatefound', () => {
+                if (reg.installing) _watchWorker(reg.installing);
+              });
+              navigator.serviceWorker.addEventListener('message', e => {
+                if (e.data?.type === 'SW_ACTIVATED' && navigator.serviceWorker.controller) {
+                  _showSwUpdateToast(null);
+                }
+              });
+            }).catch(e => console.warn('[SW] Register Warning:', e));
+        });
+      }
+    }
+
     /* === WEB AUDIO SFX SYNTHESIZER === */
     class SoundFx {
       constructor() { this.ctx = null; }
@@ -783,9 +891,8 @@
 
     let gameActive = false;
     let isPausedForQuiz = false;
-    let currentDifficulty = 'easy'; // easy, normal, hard
+    let currentDifficulty = 'easy';
     
-    // Stats
     let score = 0;
     let distance = 0;
     let shield = 100;
@@ -798,12 +905,10 @@
     let lastFireTime = 0;
     let lastOrbSpawnDist = 0;
 
-    // Movement Controls
     const playerPos = { x: 0, y: 0 };
     const playerVel = { x: 0, y: 0 };
     const keys = { w: false, a: false, s: false, d: false, boost: false, fire: false };
     
-    /* 滑動操控變數 (Mobile/Tablet Screen Touch Drag) */
     let isTouchDragging = false;
     let touchStartPos = { x: 0, y: 0 };
     let playerStartPos = { x: 0, y: 0 };
@@ -826,7 +931,6 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // Lighting
       scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
       const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.3);
@@ -919,7 +1023,6 @@
       return mesh;
     }
 
-    /* Knowledge Orb (解題知識晶體) */
     function createKnowledgeOrb() {
       const geo = new THREE.OctahedronGeometry(1.5, 0);
       const mat = new THREE.MeshPhongMaterial({
@@ -1007,9 +1110,7 @@
       showWarningBanner("🌌 發現星際知識解題晶體！快靠近收集！");
     }
 
-    /* INPUT HANDLERS (FULL SCREEN TOUCH SLIDE & KEYBOARD) */
     function setupControls() {
-      // 鍵盤操控
       window.addEventListener('keydown', (e) => {
         if (!gameActive || isPausedForQuiz) return;
         sfx.init();
@@ -1029,7 +1130,6 @@
         if (e.key === ' ' || e.key === 'Shift') keys.boost = false;
       });
 
-      /* 螢幕直接全屏滑動操控 (Touch Drag Anywhere on Canvas) */
       const canvas = document.getElementById('game-canvas');
 
       canvas.addEventListener('touchstart', (e) => {
@@ -1056,7 +1156,6 @@
       canvas.addEventListener('touchend', endTouchDrag);
       canvas.addEventListener('touchcancel', endTouchDrag);
 
-      // Touch Buttons
       document.getElementById('btn-touch-fire').addEventListener('touchstart', (e) => {
         e.preventDefault();
         sfx.init();
@@ -1072,7 +1171,6 @@
       btnBoost.addEventListener('touchend', () => { keys.boost = false; });
     }
 
-    /* GAME LOOP & UPDATES */
     let lastTime = 0;
     function gameLoop(timestamp) {
       requestAnimationFrame(gameLoop);
@@ -1183,7 +1281,6 @@
         spawnAsteroid();
       }
 
-      // 定期生成知識解題晶體 (每前進 30km 自動觸發一顆)
       if (distance - lastOrbSpawnDist > 300) {
         lastOrbSpawnDist = distance;
         spawnKnowledgeOrb();
@@ -1359,7 +1456,6 @@
       setTimeout(() => banner.classList.remove('show'), 2500);
     }
 
-    /* GAME FLOW */
     function startGame() {
       sfx.init();
       document.getElementById('start-modal').classList.add('hidden');
