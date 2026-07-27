@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072707">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072707">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072708">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072708">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072707">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072708">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072707">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072707">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072707">
-  <link rel="manifest" href="./manifest.json?v=2026072707">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072708">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072708">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072708">
+  <link rel="manifest" href="./manifest.json?v=2026072708">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -181,7 +181,7 @@
       border: 1px solid rgba(0, 240, 255, 0.3);
     }
     .meter-fill-shield {
-      width: 100%; height: 100%;
+      width: 100%; height: 10px;
       background: linear-gradient(90deg, #00f0ff, #3b82f6);
       box-shadow: 0 0 12px #00f0ff;
       transition: width 0.2s ease-out;
@@ -222,15 +222,15 @@
       position: absolute;
       top: 15%; left: 50%;
       transform: translateX(-50%) scale(0.9);
-      background: rgba(255, 0, 85, 0.9);
-      border: 2px solid #ff0055;
+      background: rgba(168, 85, 247, 0.95);
+      border: 2px solid #a855f7;
       color: #fff;
       padding: 10px 24px;
       border-radius: 30px;
       font-size: clamp(14px, 3.5vw, 17px);
       font-weight: 900;
       letter-spacing: 1px;
-      box-shadow: 0 0 35px rgba(255, 0, 85, 0.9);
+      box-shadow: 0 0 35px rgba(168, 85, 247, 0.9);
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       pointer-events: none;
@@ -548,7 +548,6 @@
           <span>飛船能量護盾 <strong id="hud-shield-val" style="color:#00f0ff; font-weight:900;">100%</strong></span>
           <div class="top-action-bar">
             <button class="btn-hud-action" id="btn-toggle-bgm" onclick="toggleBGM()">🎵 Suno BGM: 開</button>
-            <button class="btn-hud-action" onclick="triggerQuizModal()">🌌 星際解題</button>
           </div>
         </div>
         <div class="meter-bg">
@@ -565,7 +564,7 @@
       </div>
     </div>
 
-    <div class="warning-banner" id="warning-banner">⚠️ 警告：進入密集隕石帶！</div>
+    <div class="warning-banner" id="warning-banner">⚠️ 發現星際解題晶體！駕駛飛船靠近收集！</div>
 
     <div class="touch-hint">👆 電腦點擊/按鍵 或 螢幕滑動：控制飛船飛行</div>
 
@@ -597,8 +596,8 @@
           按下 `J` 鍵或點擊【發射】鈕；按 `Space` 或【衝刺】鈕飆速
         </div>
         <div class="inst-card">
-          <strong>🌌 知識解題關卡</strong>
-          收集發光紫晶體，點擊右上【星際解題】隨時學習補血！
+          <strong>🌌 飛行收集解題晶體</strong>
+          飛船撞擊收集太空中的「紫色星際晶體」即可觸發解題補充護盾！
         </div>
         <div class="inst-card">
           <strong>🎵 Suno AI 音效與 BGM</strong>
@@ -670,7 +669,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.07";
+    const APP_VERSION = "2026.07.27.08";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -760,7 +759,6 @@
         this.noteIndex = 0;
         this.hasRealAudio = false;
 
-        // 建立真實 Suno MP3 播放器
         this.audioEl = new Audio();
         this.audioEl.loop = true;
         this.audioEl.volume = 0.55;
@@ -819,7 +817,7 @@
         osc.frequency.setValueAtTime(523.25, now);
         osc.frequency.setValueAtTime(659.25, now + 0.08);
         osc.frequency.setValueAtTime(783.99, now + 0.16);
-        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.setValueAtTime(0.25, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(now + 0.35);
@@ -857,13 +855,11 @@
         if (!this.bgmEnabled) return;
         this.init();
 
-        // 優先播放真實 Suno MP3 檔
         if (this.hasRealAudio) {
           this.audioEl.play().catch(() => {});
           return;
         }
 
-        // 備援：Web Audio 旋律合成器
         if (this.bgmInterval) return;
         const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63];
         this.bgmInterval = setInterval(() => {
@@ -1136,20 +1132,21 @@
       return mesh;
     }
 
+    /* 酷炫耀眼星際解題晶體 (Glowing Purple Octahedron Knowledge Orb) */
     function createKnowledgeOrb() {
-      const geo = new THREE.OctahedronGeometry(2.2, 0);
+      const geo = new THREE.OctahedronGeometry(2.8, 0); // 放大至直徑 2.8 單位
       const mat = new THREE.MeshPhongMaterial({
-        color: 0xe9d5ff,
+        color: 0xf0abfc,
         emissive: 0xc084fc,
-        emissiveIntensity: 0.8,
-        shininess: 120,
+        emissiveIntensity: 0.9,
+        shininess: 140,
         flatShading: true
       });
       const orb = new THREE.Mesh(geo, mat);
       
       const wire = new THREE.LineSegments(
         new THREE.WireframeGeometry(geo),
-        new THREE.LineBasicMaterial({ color: 0x00f0ff })
+        new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 2 })
       );
       orb.add(wire);
 
@@ -1219,14 +1216,15 @@
       asteroids.push(mesh);
     }
 
-    function spawnKnowledgeOrb() {
+    /* 生成解題晶體：懸浮於視線前方必經航向 */
+    function spawnKnowledgeOrb(customZ = null) {
       const orb = createKnowledgeOrb();
-      orb.position.x = (Math.random() - 0.5) * 12;
-      orb.position.y = (Math.random() - 0.5) * 8;
-      orb.position.z = -60;
+      orb.position.x = (Math.random() - 0.5) * 10; // 置中於航向範圍 x: -5~5
+      orb.position.y = (Math.random() - 0.5) * 6;  // 置中於航向範圍 y: -3~3
+      orb.position.z = customZ !== null ? customZ : -50;
       scene.add(orb);
       knowledgeOrbs.push(orb);
-      showWarningBanner("🌌 發現星際解題晶體！靠近收集解題領獎！");
+      showWarningBanner("🌌 發現星際解題晶體！駕駛飛船靠近收集！");
     }
 
     function setupControls() {
@@ -1321,7 +1319,7 @@
 
         if (!isPausedForQuiz) {
           orbSpawnTimer += delta;
-          if (orbSpawnTimer >= 14.0) {
+          if (orbSpawnTimer >= 10.0) { // 每 10 秒自動產生懸浮晶體
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
           }
@@ -1452,6 +1450,7 @@
       }
     }
 
+    /* 核心吃東西撞擊觸發解題：飛船靠近撞擊解題晶體即可觸發解題 Modal */
     function updateKnowledgeOrbs(delta) {
       const currentSpeed = isBoosting ? 120 : 60;
       for (let i = knowledgeOrbs.length - 1; i >= 0; i--) {
@@ -1460,11 +1459,14 @@
         orb.rotation.y += orb.rotationSpeed;
 
         const dist = Math.hypot(orb.position.x - playerPos.x, orb.position.y - playerPos.y);
-        if (orb.position.z > -4 && orb.position.z < 4 && dist < 4.0) {
+        
+        // 當飛船飛近撞擊收集晶體 (範圍加大至 4.8 單位)
+        if (orb.position.z > -4.5 && orb.position.z < 4.5 && dist < 4.8) {
           sfx.playCollect();
+          createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xc084fc); // 紫色解題火花特效
           scene.remove(orb);
           knowledgeOrbs.splice(i, 1);
-          triggerQuizModal();
+          triggerQuizModal(); // 觸發解題視窗！
           continue;
         }
 
@@ -1635,6 +1637,9 @@
       for (let i = 0; i < 16; i++) {
         spawnAsteroid(-15 - i * 4);
       }
+
+      // 開局 2 秒處立刻預先放置一顆耀眼紫色晶體在飛船正前方航向上！
+      spawnKnowledgeOrb(-25);
     }
 
     function triggerGameOver(reason) {
