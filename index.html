@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072711">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072711">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072712">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072712">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072711">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072712">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072711">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072711">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072711">
-  <link rel="manifest" href="./manifest.json?v=2026072711">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072712">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072712">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072712">
+  <link rel="manifest" href="./manifest.json?v=2026072712">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -330,13 +330,12 @@
       pointer-events: none;
     }
 
-    /* 電腦端與行動端全面 RWD 擴大清晰設計 */
     .modal-card {
       background: rgba(13, 24, 48, 0.95);
       border: 2px solid rgba(0, 240, 255, 0.6);
       border-radius: 28px;
       padding: clamp(24px, 4vw, 44px);
-      max-width: min(960px, 94vw); /* 從 580px 大幅升級為 960px */
+      max-width: min(960px, 94vw);
       width: 95%;
       max-height: 90vh;
       overflow-y: auto;
@@ -368,7 +367,7 @@
 
     .instructions-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 寬敞明亮的 2x2 或 4 欄佈局 */
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 14px;
       margin-bottom: 26px;
       text-align: left;
@@ -672,7 +671,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.11";
+    const APP_VERSION = "2026.07.27.12";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -1322,7 +1321,7 @@
       btnBoost.addEventListener('touchend', endBoost);
     }
 
-    /* GAME LOOP & UPDATES */
+    /* GAME LOOP & UPDATES - 解題時背景動態與碰撞 100% 完全凍結暫停 */
     let lastTime = 0;
     function gameLoop(timestamp) {
       requestAnimationFrame(gameLoop);
@@ -1330,27 +1329,26 @@
       lastTime = timestamp;
 
       if (gameActive) {
-        const gameDelta = isPausedForQuiz ? delta * 0.1 : delta;
-
-        if (invincibilityTimer > 0) {
-          invincibilityTimer -= gameDelta;
-        }
-
-        updatePlayerMovement(gameDelta);
-        updateLasers(gameDelta);
-        updateAsteroids(gameDelta);
-        updateKnowledgeOrbs(gameDelta);
-        updateParticles(gameDelta);
-        updateStars(gameDelta);
-        updateHUD();
-
+        // 當開啟解題彈窗時，完全凍結所有隕石位移、玩家移動與碰撞檢測！
         if (!isPausedForQuiz) {
+          if (invincibilityTimer > 0) {
+            invincibilityTimer -= delta;
+          }
+
+          updatePlayerMovement(delta);
+          updateLasers(delta);
+          updateAsteroids(delta);
+          updateKnowledgeOrbs(delta);
+          updateParticles(delta);
+          updateStars(delta);
+
           orbSpawnTimer += delta;
           if (orbSpawnTimer >= 7.0) {
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
           }
         }
+        updateHUD();
       }
 
       renderer.render(scene, camera);
@@ -1650,6 +1648,7 @@
     function closeQuizModal() {
       document.getElementById('quiz-modal').classList.add('hidden');
       isPausedForQuiz = false;
+      invincibilityTimer = 1.5; // 關閉對話框、恢復飛行時，給予 1.5 秒無敵防護反應時間！
     }
 
     function showWarningBanner(msg) {
