@@ -705,8 +705,8 @@
       <div class="quiz-explanation-box" id="quiz-exp-box">
         <div class="quiz-explanation-title">💡 觀念解析與解題策略</div>
         <div id="quiz-exp-text">解題說明內容...</div>
-        <button class="btn-main" style="margin-top:12px; font-size:14px; padding:8px 24px;" onclick="closeQuizModal()">
-          領取能量獎勵 · 繼續飛行 🚀
+        <button class="btn-main" id="quiz-continue-btn" style="margin-top:16px; font-size:clamp(15px, 1.8vw, 19px); padding:10px 32px;" onclick="closeQuizModal()">
+          <span>領取能量獎勵 · 繼續飛行</span> 🚀
         </button>
       </div>
     </div>
@@ -1924,6 +1924,8 @@
       const expText = document.getElementById('quiz-exp-text');
       expBox.style.display = 'block';
 
+      const quizBtn = document.getElementById('quiz-continue-btn');
+
       if (isCorrect) {
         sfx.playCorrect();
         quizCorrectCount++;
@@ -1931,8 +1933,18 @@
         shield = Math.min(100, shield + 50);
         boostEnergy = 100;
         expText.innerHTML = `<span style="color:#22c55e; font-weight:900;">✅ 回答正確！護盾修復 +50%！</span><br><br>${currentActiveQuiz.strategy}`;
+        if (quizBtn) {
+          quizBtn.innerHTML = `<span>領取能量獎勵 · 繼續飛行</span> 🚀`;
+          quizBtn.style.background = 'linear-gradient(135deg, #00f0ff, #3b82f6)';
+          quizBtn.style.boxShadow = '0 0 32px rgba(0, 240, 255, 0.7)';
+        }
       } else {
         expText.innerHTML = `<span style="color:#ef4444; font-weight:900;">❌ 答案有誤！吸收知識累積經驗！</span><br><br>${currentActiveQuiz.strategy}`;
+        if (quizBtn) {
+          quizBtn.innerHTML = `<span>吸收觀念知識 · 繼續飛行</span> 🚀`;
+          quizBtn.style.background = 'linear-gradient(135deg, #f59e0b, #3b82f6)';
+          quizBtn.style.boxShadow = '0 0 32px rgba(245, 158, 11, 0.7)';
+        }
       }
     }
 
