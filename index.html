@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072708">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072708">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072709">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072709">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072708">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072709">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072708">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072708">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072708">
-  <link rel="manifest" href="./manifest.json?v=2026072708">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072709">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072709">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072709">
+  <link rel="manifest" href="./manifest.json?v=2026072709">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -181,7 +181,7 @@
       border: 1px solid rgba(0, 240, 255, 0.3);
     }
     .meter-fill-shield {
-      width: 100%; height: 10px;
+      width: 100%; height: 100%;
       background: linear-gradient(90deg, #00f0ff, #3b82f6);
       box-shadow: 0 0 12px #00f0ff;
       transition: width 0.2s ease-out;
@@ -564,7 +564,7 @@
       </div>
     </div>
 
-    <div class="warning-banner" id="warning-banner">⚠️ 發現星際解題晶體！駕駛飛船靠近收集！</div>
+    <div class="warning-banner" id="warning-banner">❓ 發現「星際問號解題智囊球」！駕駛飛船靠近或射擊即可觸發！</div>
 
     <div class="touch-hint">👆 電腦點擊/按鍵 或 螢幕滑動：控制飛船飛行</div>
 
@@ -596,8 +596,8 @@
           按下 `J` 鍵或點擊【發射】鈕；按 `Space` 或【衝刺】鈕飆速
         </div>
         <div class="inst-card">
-          <strong>🌌 飛行收集解題晶體</strong>
-          飛船撞擊收集太空中的「紫色星際晶體」即可觸發解題補充護盾！
+          <strong>❓ 捕捉發光「問號解題球」</strong>
+          太空中會出現顯眼的發光「❓問號智囊球」，飛近或射擊即可開啟解題補血！
         </div>
         <div class="inst-card">
           <strong>🎵 Suno AI 音效與 BGM</strong>
@@ -669,7 +669,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.08";
+    const APP_VERSION = "2026.07.27.09";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -817,10 +817,10 @@
         osc.frequency.setValueAtTime(523.25, now);
         osc.frequency.setValueAtTime(659.25, now + 0.08);
         osc.frequency.setValueAtTime(783.99, now + 0.16);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
         osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(now + 0.35);
+        osc.start(); osc.stop(now + 0.4);
       }
 
       playBoost() {
@@ -1132,26 +1132,50 @@
       return mesh;
     }
 
-    /* 酷炫耀眼星際解題晶體 (Glowing Purple Octahedron Knowledge Orb) */
+    /* 醒目 3D 問號解題智囊球 (Glowing Question Mark Knowledge Orb) */
     function createKnowledgeOrb() {
-      const geo = new THREE.OctahedronGeometry(2.8, 0); // 放大至直徑 2.8 單位
-      const mat = new THREE.MeshPhongMaterial({
-        color: 0xf0abfc,
-        emissive: 0xc084fc,
-        emissiveIntensity: 0.9,
-        shininess: 140,
-        flatShading: true
-      });
-      const orb = new THREE.Mesh(geo, mat);
-      
-      const wire = new THREE.LineSegments(
-        new THREE.WireframeGeometry(geo),
-        new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 2 })
-      );
-      orb.add(wire);
+      const orbGroup = new THREE.Group();
 
-      orb.rotationSpeed = 0.06;
-      return orb;
+      // 1. 中央超級發光的霓虹金紫色寶球
+      const sphereGeo = new THREE.SphereGeometry(2.6, 16, 16);
+      const sphereMat = new THREE.MeshPhongMaterial({
+        color: 0xc084fc,
+        emissive: 0xa855f7,
+        emissiveIntensity: 1.2,
+        shininess: 150,
+        transparent: true,
+        opacity: 0.92
+      });
+      const coreSphere = new THREE.Mesh(sphereGeo, sphereMat);
+      orbGroup.add(coreSphere);
+
+      // 2. 外圍雙重旋轉光環 (Satellite Rings)
+      const ringGeo = new THREE.RingGeometry(3.2, 3.8, 24);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 3;
+      orbGroup.add(ring);
+
+      // 3. 3D 浮空問號圖示 Canvas Sprite (`❓`)
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#facc15';
+      ctx.font = '900 180px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('❓', 128, 128);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(6.5, 6.5, 1);
+      sprite.position.y = 0.2;
+      orbGroup.add(sprite);
+
+      orbGroup.radius = 3.6;
+      orbGroup.rotationSpeed = 0.04;
+      return orbGroup;
     }
 
     function fireLaser() {
@@ -1216,15 +1240,14 @@
       asteroids.push(mesh);
     }
 
-    /* 生成解題晶體：懸浮於視線前方必經航向 */
     function spawnKnowledgeOrb(customZ = null) {
       const orb = createKnowledgeOrb();
-      orb.position.x = (Math.random() - 0.5) * 10; // 置中於航向範圍 x: -5~5
-      orb.position.y = (Math.random() - 0.5) * 6;  // 置中於航向範圍 y: -3~3
-      orb.position.z = customZ !== null ? customZ : -50;
+      orb.position.x = (Math.random() - 0.5) * 8; // 精準放於飛船視野中間航向 x: -4~4
+      orb.position.y = (Math.random() - 0.5) * 5;  // 精準放於飛船視野中間航向 y: -2.5~2.5
+      orb.position.z = customZ !== null ? customZ : -45;
       scene.add(orb);
       knowledgeOrbs.push(orb);
-      showWarningBanner("🌌 發現星際解題晶體！駕駛飛船靠近收集！");
+      showWarningBanner("❓ 發現「星際問號解題智囊球」！駕駛飛船靠近或射擊即可觸發！");
     }
 
     function setupControls() {
@@ -1319,7 +1342,7 @@
 
         if (!isPausedForQuiz) {
           orbSpawnTimer += delta;
-          if (orbSpawnTimer >= 10.0) { // 每 10 秒自動產生懸浮晶體
+          if (orbSpawnTimer >= 10.0) {
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
           }
@@ -1385,6 +1408,7 @@
         laser.position.z -= laserSpeed * delta;
 
         let hit = false;
+        // 檢查雷射擊中隕石
         for (let j = asteroids.length - 1; j >= 0; j--) {
           const ast = asteroids[j];
           const dist = Math.hypot(laser.position.x - ast.position.x, laser.position.y - ast.position.y);
@@ -1398,6 +1422,23 @@
             comboCount++;
             score += 150 * (1 + Math.floor(comboCount / 5));
             break;
+          }
+        }
+
+        // 雙重機制：雷射也能直接擊中「問號解題智囊球」並觸發解題！
+        if (!hit) {
+          for (let k = knowledgeOrbs.length - 1; k >= 0; k--) {
+            const orb = knowledgeOrbs[k];
+            const distOrb = Math.hypot(laser.position.x - orb.position.x, laser.position.y - orb.position.y);
+            if (Math.abs(laser.position.z - orb.position.z) < 4.0 && distOrb < 4.2) {
+              sfx.playCollect();
+              createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xfacc15); // 金黃解題火花
+              scene.remove(orb);
+              knowledgeOrbs.splice(k, 1);
+              hit = true;
+              triggerQuizModal(); // 射擊命中觸發解題！
+              break;
+            }
           }
         }
 
@@ -1450,23 +1491,29 @@
       }
     }
 
-    /* 核心吃東西撞擊觸發解題：飛船靠近撞擊解題晶體即可觸發解題 Modal */
+    /* 磁吸+超大範圍觸發機制：問號解題智囊球 */
     function updateKnowledgeOrbs(delta) {
-      const currentSpeed = isBoosting ? 120 : 60;
+      const currentSpeed = isBoosting ? 120 : 55;
       for (let i = knowledgeOrbs.length - 1; i >= 0; i--) {
         const orb = knowledgeOrbs[i];
         orb.position.z += currentSpeed * delta;
         orb.rotation.y += orb.rotationSpeed;
 
+        // 磁吸效果：當接近飛船時，解題球會自動被飛船磁吸靠攏！
+        if (orb.position.z > -35 && orb.position.z < -2) {
+          orb.position.x = THREE.MathUtils.lerp(orb.position.x, playerPos.x, 0.08);
+          orb.position.y = THREE.MathUtils.lerp(orb.position.y, playerPos.y, 0.08);
+        }
+
         const dist = Math.hypot(orb.position.x - playerPos.x, orb.position.y - playerPos.y);
         
-        // 當飛船飛近撞擊收集晶體 (範圍加大至 4.8 單位)
-        if (orb.position.z > -4.5 && orb.position.z < 4.5 && dist < 4.8) {
+        // 磁吸吸收碰撞：輕鬆觸發解題 modal！
+        if (orb.position.z > -6.0 && orb.position.z < 6.0 && dist < 6.5) {
           sfx.playCollect();
-          createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xc084fc); // 紫色解題火花特效
+          createExplosion(orb.position.x, orb.position.y, orb.position.z, 0xfacc15); // 金閃閃火花
           scene.remove(orb);
           knowledgeOrbs.splice(i, 1);
-          triggerQuizModal(); // 觸發解題視窗！
+          triggerQuizModal(); // 100% 成功開題！
           continue;
         }
 
@@ -1638,8 +1685,8 @@
         spawnAsteroid(-15 - i * 4);
       }
 
-      // 開局 2 秒處立刻預先放置一顆耀眼紫色晶體在飛船正前方航向上！
-      spawnKnowledgeOrb(-25);
+      // 開局 1.5 秒預先放一顆醒目「問號解題智囊球」在視線前方！
+      spawnKnowledgeOrb(-22);
     }
 
     function triggerGameOver(reason) {
