@@ -719,11 +719,11 @@
         <button class="cat-btn" onclick="setCategory('logic', this)">🧠 星際邏輯與密碼推理</button>
       </div>
 
-      <div class="select-label">選擇航行關卡難度：</div>
+      <div class="select-label">⚡ 選擇航行關卡難度 (預設中階·體驗刺激挑戰)：</div>
       <div class="difficulty-select">
-        <button class="diff-btn active" onclick="setDifficulty('easy', this)">初階 (太陽系)</button>
-        <button class="diff-btn" onclick="setDifficulty('normal', this)">中階 (隕石帶)</button>
-        <button class="diff-btn" onclick="setDifficulty('hard', this)">高階 (黑洞界)</button>
+        <button class="diff-btn" onclick="setDifficulty('easy', this)">🟢 初階練習 (扣20%)</button>
+        <button class="diff-btn active" onclick="setDifficulty('normal', this)">⚡ 中階挑戰 (扣35%·推薦)</button>
+        <button class="diff-btn" onclick="setDifficulty('hard', this)">🔥 高階狂暴 (扣50%·極限)</button>
       </div>
 
       <div class="leaderboard-box">
@@ -804,7 +804,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.22";
+    const APP_VERSION = "2026.07.27.23";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -1322,7 +1322,7 @@
     let gameActive = false;
     let isPausedForQuiz = false;
     let currentCategory = 'astro';
-    let currentDifficulty = 'easy';
+    let currentDifficulty = 'normal';
     
     let score = 0;
     let distance = 0;
@@ -1988,12 +1988,18 @@
     }
 
     function updateAsteroids(delta) {
-      let baseSpeed = currentDifficulty === 'easy' ? 22 : (currentDifficulty === 'normal' ? 32 : 48);
+      // 航行距離動態加速：每 10km (100m) 增加 +1.5 速度，最高 +25
+      let distanceSpeedBonus = Math.min(25, Math.floor(distance / 100) * 1.5);
+      let baseSpeed = currentDifficulty === 'easy' ? 32 : (currentDifficulty === 'normal' ? 46 : 65);
+      baseSpeed += distanceSpeedBonus;
+
       // P1-2: 時間減速鐘寶箱效果 (全場減速 50%)
       if (slowTimeTimer > 0) baseSpeed *= 0.5;
 
       const currentSpeed = isBoosting ? baseSpeed * 2.0 : baseSpeed;
-      const maxAsteroids = currentDifficulty === 'easy' ? 5 : (currentDifficulty === 'normal' ? 8 : 11);
+      // 隕石密度隨難度與距離動態增加
+      let maxAsteroids = currentDifficulty === 'easy' ? 8 : (currentDifficulty === 'normal' ? 14 : 20);
+      maxAsteroids += Math.min(6, Math.floor(distance / 200));
 
       distance += Math.round(currentSpeed * delta * 0.2);
       score += Math.round((isBoosting ? 25 : 10) * delta * 10);
@@ -2018,10 +2024,11 @@
 
           comboCount = 0;
           if (!isBoosting && invincibilityTimer <= 0) {
-            shield -= 12;
-            invincibilityTimer = 1.2;
+            let damage = currentDifficulty === 'easy' ? 25 : (currentDifficulty === 'normal' ? 35 : 50);
+            shield -= damage;
+            invincibilityTimer = 1.0;
             if (shield <= 0) {
-              triggerGameOver("飛船受創過重，護盾歸零！");
+              triggerGameOver(`飛船遭受隕石重創！護盾扣除 ${damage}% 歸零撕裂！`);
             }
           }
           continue;
@@ -2259,9 +2266,9 @@
         sfx.playCorrect();
         quizCorrectCount++;
         score += 800;
-        shield = Math.min(100, shield + 50);
+        shield = Math.min(100, shield + 35);
         boostEnergy = 100;
-        expText.innerHTML = `<span style="color:#22c55e; font-weight:900;">✅ 回答正確！護盾修復 +50%！</span><br><br>${currentActiveQuiz.strategy}`;
+        expText.innerHTML = `<span style="color:#22c55e; font-weight:900;">✅ 回答正確！護盾修復 +35%！</span><br><br>${currentActiveQuiz.strategy}`;
         if (quizBtn) {
           quizBtn.innerHTML = `<span>領取能量獎勵 · 繼續飛行</span> 🚀`;
           quizBtn.style.background = 'linear-gradient(135deg, #00f0ff, #3b82f6)';
@@ -2269,11 +2276,18 @@
         }
       } else {
         sfx.playWrong();
-        expText.innerHTML = `<span style="color:#ef4444; font-weight:900;">❌ 答案有誤！吸收知識累積經驗！</span><br><br>${currentActiveQuiz.strategy}`;
+        let penalty = currentDifficulty === 'easy' ? 15 : (currentDifficulty === 'normal' ? 25 : 35);
+        shield = Math.max(0, shield - penalty);
+        score = Math.max(0, score - 300);
+        expText.innerHTML = `<span style="color:#ef4444; font-weight:900;">❌ 觀念有誤！護盾損耗 -${penalty}%！吸收正確知識累積經驗！</span><br><br>${currentActiveQuiz.strategy}`;
         if (quizBtn) {
           quizBtn.innerHTML = `<span>吸收觀念知識 · 繼續飛行</span> 🚀`;
           quizBtn.style.background = 'linear-gradient(135deg, #f59e0b, #3b82f6)';
           quizBtn.style.boxShadow = '0 0 32px rgba(245, 158, 11, 0.7)';
+        }
+        if (shield <= 0) {
+          closeQuizModal();
+          triggerGameOver("解題連續答錯受創，飛船能量系統過載瓦解！");
         }
       }
     }
