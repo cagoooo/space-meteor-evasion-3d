@@ -804,7 +804,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.20";
+    const APP_VERSION = "2026.07.27.21";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -886,9 +886,7 @@
       }
     }
 
-    /* PIXABAY CC0 REAL SFX AUDIO POOL SYSTEM & WEB AUDIO FALLBACK
-       BGM Track: "Space Arcade Synthwave" by Pixabay CC0 License
-    */
+    /* PIXABAY & PHASER 3 CC0 REAL SFX AUDIO POOL SYSTEM WITH DUAL FALLBACK */
     class SoundFx {
       constructor() {
         this.ctx = null;
@@ -905,7 +903,7 @@
           this.hasRealAudio = true;
         });
 
-        // Pixabay SFX Pool (3 instances per sfx type to prevent audio cut-off)
+        // SFX Pool (3 instances per sfx type for rapid fire without cut-off)
         this.sfxPools = {};
         this.sfxFiles = {
           laser: './assets/audio/sfx/sfx-laser.mp3',
@@ -917,13 +915,13 @@
           gameover: './assets/audio/sfx/sfx-gameover.mp3'
         };
         this.sfxVolumes = {
-          laser: 0.5,
-          explosion: 0.65,
-          collect: 0.65,
-          boost: 0.55,
-          correct: 0.7,
-          wrong: 0.65,
-          gameover: 0.75
+          laser: 0.6,
+          explosion: 0.85,
+          collect: 0.75,
+          boost: 0.6,
+          correct: 0.85,
+          wrong: 0.85,
+          gameover: 0.85
         };
 
         this.initSfxPools();
@@ -940,23 +938,108 @@
         }
       }
 
+      unlockAllAudio() {
+        this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        for (const pool of Object.values(this.sfxPools)) {
+          for (const a of pool) {
+            a.load();
+          }
+        }
+      }
+
       playSfx(kind) {
+        this.init();
         const pool = this.sfxPools[kind];
-        const vol = this.sfxVolumes[kind] || 0.6;
+        const vol = this.sfxVolumes[kind] || 0.7;
+        let played = false;
+
         if (pool) {
           for (const a of pool) {
             if (a.paused || a.ended) {
               a.currentTime = 0;
               a.volume = vol;
-              a.play().catch(() => {});
+              const p = a.play();
+              if (p) {
+                p.then(() => { played = true; }).catch(() => {
+                  this.fallbackWebAudioSynth(kind);
+                });
+              }
               return;
             }
           }
           const a = pool[0];
           a.currentTime = 0;
           a.volume = vol;
-          a.play().catch(() => {});
+          const p = a.play();
+          if (p) {
+            p.catch(() => { this.fallbackWebAudioSynth(kind); });
+          }
+        } else {
+          this.fallbackWebAudioSynth(kind);
         }
+      }
+
+      fallbackWebAudioSynth(kind) {
+        if (!this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          if (kind === 'laser') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(110, now + 0.15);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(now + 0.15);
+          } else if (kind === 'explosion') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(25, now + 0.5);
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(now + 0.5);
+          } else if (kind === 'correct') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(now + 0.5);
+          } else if (kind === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.setValueAtTime(140, now + 0.12);
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(now + 0.4);
+          } else if (kind === 'collect') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(783.99, now + 0.08);
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(now + 0.35);
+          } else if (kind === 'gameover') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(330, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.8);
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(); osc.stop(now + 0.8);
+          }
+        } catch (e) {}
       }
 
       init() {
@@ -965,33 +1048,13 @@
         }
       }
 
-      playLaser() {
-        this.playSfx('laser');
-      }
-
-      playExplosion() {
-        this.playSfx('explosion');
-      }
-
-      playCollect() {
-        this.playSfx('collect');
-      }
-
-      playBoost() {
-        this.playSfx('boost');
-      }
-
-      playCorrect() {
-        this.playSfx('correct');
-      }
-
-      playWrong() {
-        this.playSfx('wrong');
-      }
-
-      playGameOver() {
-        this.playSfx('gameover');
-      }
+      playLaser() { this.playSfx('laser'); }
+      playExplosion() { this.playSfx('explosion'); }
+      playCollect() { this.playSfx('collect'); }
+      playBoost() { this.playSfx('boost'); }
+      playCorrect() { this.playSfx('correct'); }
+      playWrong() { this.playSfx('wrong'); }
+      playGameOver() { this.playSfx('gameover'); }
 
       startSunoBGM() {
         if (!this.bgmEnabled) return;
@@ -2237,7 +2300,7 @@
     }
 
     function startGame() {
-      sfx.init();
+      sfx.unlockAllAudio();
       sfx.startSunoBGM();
       document.getElementById('start-modal').classList.add('hidden');
       resetStats();
