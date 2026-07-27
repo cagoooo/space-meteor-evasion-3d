@@ -804,7 +804,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.21";
+    const APP_VERSION = "2026.07.27.22";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -953,32 +953,24 @@
       playSfx(kind) {
         this.init();
         const pool = this.sfxPools[kind];
-        const vol = this.sfxVolumes[kind] || 0.7;
-        let played = false;
+        const vol = this.sfxVolumes[kind] || 0.85;
+
+        // 零時差即時發聲層：Web Audio API 瞬間觸發 (防瀏覽器標籤頁切換或 Audio 緩衝延遲)
+        this.fallbackWebAudioSynth(kind);
 
         if (pool) {
           for (const a of pool) {
             if (a.paused || a.ended) {
               a.currentTime = 0;
               a.volume = vol;
-              const p = a.play();
-              if (p) {
-                p.then(() => { played = true; }).catch(() => {
-                  this.fallbackWebAudioSynth(kind);
-                });
-              }
+              a.play().catch(() => {});
               return;
             }
           }
           const a = pool[0];
           a.currentTime = 0;
           a.volume = vol;
-          const p = a.play();
-          if (p) {
-            p.catch(() => { this.fallbackWebAudioSynth(kind); });
-          }
-        } else {
-          this.fallbackWebAudioSynth(kind);
+          a.play().catch(() => {});
         }
       }
 
