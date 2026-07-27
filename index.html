@@ -12,8 +12,8 @@
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
   <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072703">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072703">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072704">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072704">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
   <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072703">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072704">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072703">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072703">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072703">
-  <link rel="manifest" href="./manifest.json?v=2026072703">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072704">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072704">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072704">
+  <link rel="manifest" href="./manifest.json?v=2026072704">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -61,6 +61,7 @@
       color: #fff;
     }
 
+    /* 3D Canvas 置底全屏 */
     #game-canvas {
       position: absolute;
       top: 0;
@@ -70,15 +71,15 @@
       z-index: 1;
     }
 
-    /* COCKPIT OVERLAY & HUD */
+    /* 駕駛艙外框：透明清澈 */
     .cockpit-overlay {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: 5;
-      background: radial-gradient(circle at center, transparent 50%, rgba(6, 18, 38, 0.4) 80%, rgba(2, 6, 18, 0.9) 100%);
-      box-shadow: inset 0 0 120px rgba(0, 240, 255, 0.2);
+      background: radial-gradient(circle at center, transparent 75%, rgba(6, 18, 38, 0.3) 90%, rgba(2, 6, 18, 0.8) 100%);
+      box-shadow: inset 0 0 80px rgba(0, 240, 255, 0.15);
     }
 
     .reticle {
@@ -193,7 +194,6 @@
       transition: width 0.1s linear;
     }
 
-    /* Top Action Bar Buttons */
     .top-action-bar {
       display: flex;
       gap: 8px;
@@ -220,7 +220,6 @@
       transform: scale(1.05);
     }
 
-    /* Notification Banner */
     .warning-banner {
       position: absolute;
       top: 15%; left: 50%;
@@ -245,7 +244,6 @@
       transform: translateX(-50%) scale(1);
     }
 
-    /* Touch Controls Overlay */
     .mobile-controls {
       display: flex;
       width: 100%;
@@ -312,14 +310,14 @@
     }
     .btn-touch:active { transform: scale(0.9); }
 
-    /* MODALS & OVERLAYS */
+    /* 關鍵修復：隱藏模態框必須 display: none !important; 徹底消除遮擋！ */
     .modal-overlay {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(3, 7, 18, 0.9);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -330,12 +328,13 @@
       transition: opacity 0.3s ease;
     }
     .modal-overlay.hidden {
+      display: none !important; /* 徹底消除 z-index 100 遮罩 */
       opacity: 0;
       pointer-events: none;
     }
 
     .modal-card {
-      background: rgba(13, 24, 48, 0.92);
+      background: rgba(13, 24, 48, 0.94);
       border: 2px solid rgba(0, 240, 255, 0.5);
       border-radius: 24px;
       padding: clamp(20px, 4vw, 36px);
@@ -434,7 +433,6 @@
       box-shadow: 0 0 38px rgba(0, 240, 255, 0.9);
     }
 
-    /* QUIZ MODAL & EDUCATIONAL STRATEGY */
     .quiz-card {
       border-color: #a855f7;
       box-shadow: 0 0 45px rgba(168, 85, 247, 0.45);
@@ -504,7 +502,6 @@
       gap: 6px;
     }
 
-    /* FOOTER */
     .site-credit {
       position: absolute;
       bottom: 10px;
@@ -543,7 +540,6 @@
   </div>
 
   <div class="hud-layer" id="hud-layer">
-    <!-- Top Stats Bar -->
     <div class="top-hud">
       <div class="hud-card">
         <div class="hud-title">目前得分 <span class="combo-badge" id="combo-badge"></span></div>
@@ -572,13 +568,10 @@
       </div>
     </div>
 
-    <!-- Notification Banner -->
     <div class="warning-banner" id="warning-banner">⚠️ 警告：進入密集隕石帶！</div>
 
-    <!-- Touch Control Overlay Hint -->
     <div class="touch-hint">👆 電腦點擊/按鍵 或 螢幕滑動：控制飛船飛行</div>
 
-    <!-- Mobile / Desktop Action Buttons -->
     <div class="mobile-controls">
       <div class="action-btn-group">
         <button class="btn-touch btn-touch-fire" id="btn-touch-fire" title="點擊發射雷射 (按鍵: J)">
@@ -680,7 +673,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.03";
+    const APP_VERSION = "2026.07.27.04";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -995,7 +988,7 @@
     function initThree() {
       const container = document.getElementById('game-canvas');
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x020208, 0.003); // 降低霧氣密度，大幅提升遠處隕石清晰度！
+      scene.fog = new THREE.FogExp2(0x020208, 0.003);
 
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 0, 0);
@@ -1004,7 +997,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.85)); // 提升環境光照亮度
+      scene.add(new THREE.AmbientLight(0xffffff, 0.85));
 
       const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.6);
       dirLight.position.set(10, 20, 10);
@@ -1063,7 +1056,7 @@
     }
 
     function createAsteroidMesh() {
-      const radius = Math.random() * 1.8 + 1.4; // 增大隕石尺寸，更加醒目！
+      const radius = Math.random() * 1.8 + 1.4;
       const geometry = new THREE.DodecahedronGeometry(radius, 1);
       
       const posAttr = geometry.attributes.position;
@@ -1081,7 +1074,7 @@
       
       const material = new THREE.MeshStandardMaterial({
         color: color,
-        emissive: 0x1e293b, // 增加適度自發光，確保在深空依然清晰可見！
+        emissive: 0x1e293b,
         roughness: 0.7,
         metalness: 0.3,
         flatShading: true
@@ -1165,11 +1158,11 @@
       particles.push(pSystem);
     }
 
-    /* 核心修復：隕石高頻穩定生成（近距離 z = -80 到 -150） */
     function spawnAsteroid(customZ = null) {
       const mesh = createAsteroidMesh();
-      mesh.position.x = (Math.random() - 0.5) * 36;
-      mesh.position.y = (Math.random() - 0.5) * 24;
+      // 精準分布於視線前方中央區域 x: -16~16, y: -10~10
+      mesh.position.x = (Math.random() - 0.5) * 32;
+      mesh.position.y = (Math.random() - 0.5) * 20;
       mesh.position.z = customZ !== null ? customZ : (-90 - Math.random() * 60);
       scene.add(mesh);
       asteroids.push(mesh);
@@ -1177,8 +1170,8 @@
 
     function spawnKnowledgeOrb() {
       const orb = createKnowledgeOrb();
-      orb.position.x = (Math.random() - 0.5) * 16;
-      orb.position.y = (Math.random() - 0.5) * 12;
+      orb.position.x = (Math.random() - 0.5) * 14;
+      orb.position.y = (Math.random() - 0.5) * 10;
       orb.position.z = -120;
       scene.add(orb);
       knowledgeOrbs.push(orb);
@@ -1264,9 +1257,8 @@
       const delta = Math.min((timestamp - lastTime) / 1000, 0.1);
       lastTime = timestamp;
 
-      // 當開啟問答視窗時，背景畫面依然微速飄動更新，避免畫面卡死
       if (gameActive) {
-        const gameDelta = isPausedForQuiz ? delta * 0.1 : delta; // 解題時 slow-motion 漂浮
+        const gameDelta = isPausedForQuiz ? delta * 0.1 : delta;
 
         updatePlayerMovement(gameDelta);
         updateLasers(gameDelta);
@@ -1278,7 +1270,7 @@
 
         if (!isPausedForQuiz) {
           orbSpawnTimer += delta;
-          if (orbSpawnTimer >= 12.0) {
+          if (orbSpawnTimer >= 14.0) {
             orbSpawnTimer = 0;
             spawnKnowledgeOrb();
           }
@@ -1367,7 +1359,6 @@
       }
     }
 
-    /* 修復：確保隕石源源不絕生成與移動 */
     function updateAsteroids(delta) {
       const baseSpeed = currentDifficulty === 'easy' ? 45 : (currentDifficulty === 'normal' ? 68 : 95);
       const currentSpeed = isBoosting ? baseSpeed * 2.2 : baseSpeed;
@@ -1375,8 +1366,7 @@
       distance += Math.round(currentSpeed * delta * 0.2);
       score += Math.round((isBoosting ? 25 : 10) * delta * 10);
 
-      // 高頻生成：維持場面上始終有 12 ~ 18 顆隕石！
-      if (asteroids.length < 15) {
+      if (asteroids.length < 16) {
         spawnAsteroid();
       }
 
@@ -1491,7 +1481,7 @@
       isPausedForQuiz = true;
       const quizModal = document.getElementById('quiz-modal');
       document.getElementById('quiz-exp-box').style.display = 'none';
-      quizModal.classList.remove('hidden');
+      quizModal.classList.remove('hidden'); // 移除 hidden class 展開彈窗
 
       currentActiveQuiz = QUIZ_BANK[Math.floor(Math.random() * QUIZ_BANK.length)];
       document.getElementById('quiz-q-text').innerText = currentActiveQuiz.q;
@@ -1539,7 +1529,7 @@
     }
 
     function closeQuizModal() {
-      document.getElementById('quiz-modal').classList.add('hidden');
+      document.getElementById('quiz-modal').classList.add('hidden'); // 加入 hidden class (含有 display:none!important)
       isPausedForQuiz = false;
     }
 
@@ -1553,7 +1543,7 @@
     function startGame() {
       sfx.init();
       sfx.startSunoBGM();
-      document.getElementById('start-modal').classList.add('hidden');
+      document.getElementById('start-modal').classList.add('hidden'); // 隱藏開始彈窗
       resetStats();
       gameActive = true;
     }
@@ -1582,7 +1572,7 @@
       knowledgeOrbs = [];
       particles = [];
 
-      // 核心初始化：開局立即預先生成 16 顆近距離與中距離隕石，畫面開局就充滿震撼隕石群！
+      // 預先生成 16 顆巨型隕石帶
       for (let i = 0; i < 16; i++) {
         spawnAsteroid(-20 - i * 10);
       }
