@@ -1,5 +1,5 @@
 /* sw.js - PWA Service Worker with Version Gate & Cache Busting */
-const BUILD_VERSION = "2026.07.27.19";
+const BUILD_VERSION = "2026.07.27.20";
 const CACHE_NAME = `space-thunder-${BUILD_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -12,7 +12,14 @@ const PRECACHE_ASSETS = [
   './icon-512.png',
   './apple-touch-icon.png',
   './og-preview.png',
-  './assets/audio/bgm-space-arcade.mp3'
+  './assets/audio/bgm-space-arcade.mp3',
+  './assets/audio/sfx/sfx-laser.mp3',
+  './assets/audio/sfx/sfx-explosion.mp3',
+  './assets/audio/sfx/sfx-collect.mp3',
+  './assets/audio/sfx/sfx-boost.mp3',
+  './assets/audio/sfx/sfx-correct.mp3',
+  './assets/audio/sfx/sfx-wrong.mp3',
+  './assets/audio/sfx/sfx-gameover.mp3'
 ];
 
 self.addEventListener('install', (event) => {

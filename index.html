@@ -804,7 +804,7 @@
 
   <script>
     /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
-    const APP_VERSION = "2026.07.27.19";
+    const APP_VERSION = "2026.07.27.20";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -886,15 +886,13 @@
       }
     }
 
-    /* PIXABAY CC0 MP3 AUDIO MANAGER & WEB AUDIO FALLBACK
+    /* PIXABAY CC0 REAL SFX AUDIO POOL SYSTEM & WEB AUDIO FALLBACK
        BGM Track: "Space Arcade Synthwave" by Pixabay CC0 License
     */
     class SoundFx {
       constructor() {
         this.ctx = null;
         this.bgmEnabled = true;
-        this.bgmInterval = null;
-        this.noteIndex = 0;
         this.hasRealAudio = false;
 
         this.audioEl = new Audio();
@@ -905,12 +903,60 @@
 
         this.audioEl.addEventListener('canplaythrough', () => {
           this.hasRealAudio = true;
-          console.log('✅ 檢測到 Pixabay 實體星際 BGM MP3 音檔 (4.7MB)！開啟高音質淡入播放');
         });
-        this.audioEl.addEventListener('error', () => {
-          this.hasRealAudio = false;
-          console.log('ℹ️ 未發現實體 MP3，自動備援降級至 Web Audio 音訊合成器');
-        });
+
+        // Pixabay SFX Pool (3 instances per sfx type to prevent audio cut-off)
+        this.sfxPools = {};
+        this.sfxFiles = {
+          laser: './assets/audio/sfx/sfx-laser.mp3',
+          explosion: './assets/audio/sfx/sfx-explosion.mp3',
+          collect: './assets/audio/sfx/sfx-collect.mp3',
+          boost: './assets/audio/sfx/sfx-boost.mp3',
+          correct: './assets/audio/sfx/sfx-correct.mp3',
+          wrong: './assets/audio/sfx/sfx-wrong.mp3',
+          gameover: './assets/audio/sfx/sfx-gameover.mp3'
+        };
+        this.sfxVolumes = {
+          laser: 0.5,
+          explosion: 0.65,
+          collect: 0.65,
+          boost: 0.55,
+          correct: 0.7,
+          wrong: 0.65,
+          gameover: 0.75
+        };
+
+        this.initSfxPools();
+      }
+
+      initSfxPools() {
+        for (const [kind, path] of Object.entries(this.sfxFiles)) {
+          this.sfxPools[kind] = [];
+          for (let i = 0; i < 3; i++) {
+            const a = new Audio(path);
+            a.preload = 'auto';
+            this.sfxPools[kind].push(a);
+          }
+        }
+      }
+
+      playSfx(kind) {
+        const pool = this.sfxPools[kind];
+        const vol = this.sfxVolumes[kind] || 0.6;
+        if (pool) {
+          for (const a of pool) {
+            if (a.paused || a.ended) {
+              a.currentTime = 0;
+              a.volume = vol;
+              a.play().catch(() => {});
+              return;
+            }
+          }
+          const a = pool[0];
+          a.currentTime = 0;
+          a.volume = vol;
+          a.play().catch(() => {});
+        }
       }
 
       init() {
@@ -920,74 +966,31 @@
       }
 
       playLaser() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(880, now);
-        osc.frequency.exponentialRampToValueAtTime(110, now + 0.15);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(now + 0.15);
+        this.playSfx('laser');
       }
 
       playExplosion() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(180, now);
-        osc.frequency.exponentialRampToValueAtTime(25, now + 0.5);
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(now + 0.5);
+        this.playSfx('explosion');
       }
 
       playCollect() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.setValueAtTime(659.25, now + 0.08);
-        osc.frequency.setValueAtTime(783.99, now + 0.16);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(now + 0.4);
+        this.playSfx('collect');
       }
 
       playBoost() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(750, now + 0.35);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(now + 0.35);
+        this.playSfx('boost');
       }
 
       playCorrect() {
-        if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, now);
-        osc.frequency.setValueAtTime(880, now + 0.12);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(now + 0.4);
+        this.playSfx('correct');
+      }
+
+      playWrong() {
+        this.playSfx('wrong');
+      }
+
+      playGameOver() {
+        this.playSfx('gameover');
       }
 
       startSunoBGM() {
@@ -996,7 +999,6 @@
 
         if (this.hasRealAudio || this.audioEl.readyState >= 2) {
           this.audioEl.play().then(() => {
-            // 2 秒平滑淡入到 0.45 音量
             const targetVol = 0.45;
             const steps = 20;
             let i = 0;
@@ -1008,38 +1010,11 @@
           }).catch(() => {});
           return;
         }
-
-        if (this.bgmInterval) return;
-        const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63];
-        this.bgmInterval = setInterval(() => {
-          if (!this.bgmEnabled || !this.ctx || this.hasRealAudio) return;
-          const now = this.ctx.currentTime;
-          
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sawtooth';
-          
-          const freq = notes[this.noteIndex % notes.length];
-          this.noteIndex++;
-
-          osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.04, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-          
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start();
-          osc.stop(now + 0.22);
-        }, 240);
       }
 
       stopSunoBGM() {
         if (this.audioEl) {
           this.audioEl.pause();
-        }
-        if (this.bgmInterval) {
-          clearInterval(this.bgmInterval);
-          this.bgmInterval = null;
         }
       }
     }
@@ -2238,6 +2213,7 @@
           quizBtn.style.boxShadow = '0 0 32px rgba(0, 240, 255, 0.7)';
         }
       } else {
+        sfx.playWrong();
         expText.innerHTML = `<span style="color:#ef4444; font-weight:900;">❌ 答案有誤！吸收知識累積經驗！</span><br><br>${currentActiveQuiz.strategy}`;
         if (quizBtn) {
           quizBtn.innerHTML = `<span>吸收觀念知識 · 繼續飛行</span> 🚀`;
@@ -2382,6 +2358,7 @@
 
     function triggerGameOver(reason) {
       gameActive = false;
+      sfx.playGameOver();
       document.getElementById('gameover-modal').classList.remove('hidden');
       document.getElementById('gameover-reason').innerText = reason;
       document.getElementById('go-score').innerText = score;
