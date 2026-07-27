@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>3D 星際雷霆：隕石防禦與太空探索解題大冒險</title>
-  <meta name="description" content="適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲">
+  <meta name="description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
 
   <!-- Open Graph & Social Preview Meta -->
   <meta property="og:site_name" content="3D 星際雷霆大冒險">
   <meta property="og:type" content="website">
   <meta property="og:title" content="3D 星際雷霆大冒險 - 第一人稱飛船駕駛與太空科學解題">
-  <meta property="og:description" content="適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲">
+  <meta property="og:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
   <meta property="og:url" content="https://cagoooo.github.io/space-meteor-evasion-3d/">
-  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072701">
-  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072701">
+  <meta property="og:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072702">
+  <meta property="og:image:secure_url" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072702">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:locale" content="zh_TW">
@@ -21,17 +21,17 @@
   <!-- Twitter Card Meta -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="3D 星際雷霆大冒險">
-  <meta name="twitter:description" content="適合手機/平板滑動操控、第一人稱飛船駕駛、雷射砲擊與太空天文解題策略的寓教於樂 3D 遊戲">
-  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072701">
+  <meta name="twitter:description" content="適合電腦/手機/平板操控、第一人稱飛船駕駛、雷射砲擊、Suno BGM 音樂與太空科學解題策略的寓教於樂 3D 遊戲">
+  <meta name="twitter:image" content="https://cagoooo.github.io/space-meteor-evasion-3d/og-preview.png?v=2026072702">
 
   <!-- Canonical Link -->
   <link rel="canonical" href="https://cagoooo.github.io/space-meteor-evasion-3d/">
 
   <!-- Favicon & PWA Icons -->
-  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072701">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072701">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072701">
-  <link rel="manifest" href="./manifest.json?v=2026072701">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2026072702">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=2026072702">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2026072702">
+  <link rel="manifest" href="./manifest.json?v=2026072702">
   <meta name="theme-color" content="#020208">
 
   <!-- Google Fonts -->
@@ -49,7 +49,7 @@
       -webkit-user-select: none;
       margin: 0;
       padding: 0;
-      touch-action: none; /* 全屏滑動觸控優化 */
+      touch-action: manipulation;
     }
 
     body, html {
@@ -70,30 +70,24 @@
       z-index: 1;
     }
 
-    /* === COCKPIT GLASS & HUD === */
+    /* COCKPIT OVERLAY & HUD */
     .cockpit-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
       z-index: 5;
       background: radial-gradient(circle at center, transparent 50%, rgba(6, 18, 38, 0.4) 80%, rgba(2, 6, 18, 0.9) 100%);
       box-shadow: inset 0 0 120px rgba(0, 240, 255, 0.2);
     }
 
-    /* Target Reticle */
     .reticle {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 48px;
-      height: 48px;
+      top: 50%; left: 50%;
+      width: 48px; height: 48px;
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 6;
-      transition: transform 0.05s ease-out;
     }
     .reticle::before, .reticle::after {
       content: '';
@@ -118,13 +112,10 @@
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
-    /* HUD LAYER */
     .hud-layer {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 10;
       pointer-events: none;
       display: flex;
@@ -142,13 +133,14 @@
     }
 
     .hud-card {
-      background: rgba(10, 22, 40, 0.8);
+      background: rgba(10, 22, 40, 0.82);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(0, 240, 255, 0.35);
       border-radius: 14px;
       padding: 8px 14px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 240, 255, 0.12);
+      pointer-events: auto;
     }
 
     .hud-title {
@@ -182,8 +174,7 @@
       width: clamp(140px, 26vw, 250px);
     }
     .meter-bg {
-      width: 100%;
-      height: 10px;
+      width: 100%; height: 10px;
       background: rgba(255, 255, 255, 0.12);
       border-radius: 5px;
       overflow: hidden;
@@ -191,24 +182,48 @@
       border: 1px solid rgba(0, 240, 255, 0.3);
     }
     .meter-fill-shield {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       background: linear-gradient(90deg, #00f0ff, #3b82f6);
       box-shadow: 0 0 12px #00f0ff;
       transition: width 0.2s ease-out;
     }
     .meter-fill-boost {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       background: linear-gradient(90deg, #ff9900, #ff0055);
       transition: width 0.1s linear;
+    }
+
+    /* Top Action Bar Buttons (BGM & Trigger Quiz) */
+    .top-action-bar {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-hud-action {
+      background: rgba(168, 85, 247, 0.25);
+      border: 1px solid #a855f7;
+      color: #e9d5ff;
+      border-radius: 12px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-hud-action:hover, .btn-hud-action:active {
+      background: rgba(168, 85, 247, 0.6);
+      color: #fff;
+      transform: scale(1.05);
     }
 
     /* Notification Banner */
     .warning-banner {
       position: absolute;
-      top: 15%;
-      left: 50%;
+      top: 15%; left: 50%;
       transform: translateX(-50%) scale(0.9);
       background: rgba(168, 85, 247, 0.9);
       border: 2px solid #a855f7;
@@ -230,7 +245,7 @@
       transform: translateX(-50%) scale(1);
     }
 
-    /* Mobile Touch Control Overlay Hint */
+    /* Touch Controls Overlay */
     .mobile-controls {
       display: flex;
       width: 100%;
@@ -243,8 +258,7 @@
 
     .touch-hint {
       position: absolute;
-      bottom: 90px;
-      left: 50%;
+      bottom: 90px; left: 50%;
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(0, 240, 255, 0.4);
@@ -268,9 +282,10 @@
       margin-left: auto;
     }
 
+    /* 支援滑鼠點擊與手機觸控的對應按鈕 */
     .btn-touch {
-      width: clamp(65px, 16vw, 78px);
-      height: clamp(65px, 16vw, 78px);
+      width: clamp(70px, 16vw, 84px);
+      height: clamp(70px, 16vw, 84px);
       border-radius: 50%;
       color: #fff;
       font-weight: 900;
@@ -282,7 +297,9 @@
       backdrop-filter: blur(10px);
       transition: transform 0.1s, background-color 0.1s;
       border: 2px solid;
-      touch-action: manipulation;
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none;
     }
     .btn-touch-fire {
       background: rgba(0, 240, 255, 0.3);
@@ -296,7 +313,7 @@
     }
     .btn-touch:active { transform: scale(0.9); }
 
-    /* === MODALS & OVERLAYS === */
+    /* MODALS & OVERLAYS */
     .modal-overlay {
       position: absolute;
       top: 0; left: 0;
@@ -312,7 +329,6 @@
       padding: 16px;
       text-align: center;
       transition: opacity 0.3s ease;
-      touch-action: auto;
     }
     .modal-overlay.hidden {
       opacity: 0;
@@ -536,9 +552,12 @@
       </div>
 
       <div class="hud-card shield-container">
-        <div class="hud-title" style="display:flex; justify-content:space-between;">
+        <div class="hud-title" style="display:flex; justify-content:space-between; align-items:center;">
           <span>飛船能量護盾</span>
-          <span id="hud-shield-val">100%</span>
+          <div class="top-action-bar">
+            <button class="btn-hud-action" id="btn-toggle-bgm" onclick="toggleBGM()">🎵 Suno BGM: 開</button>
+            <button class="btn-hud-action" onclick="triggerQuizModal()">🌌 星際解題</button>
+          </div>
         </div>
         <div class="meter-bg">
           <div class="meter-fill-shield" id="shield-bar"></div>
@@ -558,16 +577,16 @@
     <div class="warning-banner" id="warning-banner">⚠️ 警告：進入密集隕石帶！</div>
 
     <!-- Touch Control Overlay Hint -->
-    <div class="touch-hint">👆 螢幕任意處滑動：控制飛船飛行</div>
+    <div class="touch-hint">👆 電腦點擊/按鍵 或 螢幕滑動：控制飛船飛行</div>
 
-    <!-- Mobile Touch Action Buttons -->
+    <!-- Mobile / Desktop Action Buttons -->
     <div class="mobile-controls">
       <div class="action-btn-group">
-        <button class="btn-touch btn-touch-fire" id="btn-touch-fire">
-          💥<span style="font-size:11px;">發射</span>
+        <button class="btn-touch btn-touch-fire" id="btn-touch-fire" title="點擊發射雷射 (按鍵: J)">
+          💥<span style="font-size:11px;">發射 (J)</span>
         </button>
-        <button class="btn-touch btn-touch-boost" id="btn-touch-boost">
-          🚀<span style="font-size:11px;">衝刺</span>
+        <button class="btn-touch btn-touch-boost" id="btn-touch-boost" title="點擊按住曲速衝刺 (按鍵: Space)">
+          🚀<span style="font-size:11px;">衝刺 (Space)</span>
         </button>
       </div>
     </div>
@@ -577,20 +596,24 @@
   <div class="modal-overlay" id="start-modal">
     <div class="modal-card">
       <h1 class="game-title">🚀 3D 星際雷霆解題大冒險</h1>
-      <p class="subtitle">第一人稱飛船駕駛 · 螢幕滑動操控 · 太空天文科學解題策略版</p>
+      <p class="subtitle">第一人稱飛船駕駛 · 電腦點擊/鍵盤/觸控全滑動 · Suno BGM 與太空科學解題版</p>
 
       <div class="instructions-grid">
         <div class="inst-card">
-          <strong>📱 螢幕直接滑動</strong>
-          手機/平板螢幕上按住直接手指滑動飛船
+          <strong>📱 雙端隨心操控</strong>
+          電腦鍵盤 `WASD` / 滑鼠點擊，或手機螢幕按住隨意滑動
         </div>
         <div class="inst-card">
-          <strong>🎮 鍵盤與按鈕</strong>
-          `WASD` 轉向，`J` 發射雷射砲，`Space` 曲速衝刺
+          <strong>💥 能量雷射砲與衝刺</strong>
+          按下 `J` 鍵或點擊【發射】鈕；按 `Space` 或【衝刺】鈕飆速
         </div>
         <div class="inst-card">
           <strong>🌌 知識解題關卡</strong>
-          收集紫水晶進入解題關卡，觀看解題策略獲得滿能量！
+          每 12 秒出現發光紫晶體，點擊右上【星際解題】隨時學習補血！
+        </div>
+        <div class="inst-card">
+          <strong>🎵 Suno AI 音效與 BGM</strong>
+          內建動態 Suno 英雄太空 BGM 與立體星戰衝擊聲效！
         </div>
       </div>
 
@@ -657,8 +680,8 @@
   </div>
 
   <script>
-    /* === PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION === */
-    const APP_VERSION = "2026.07.27.01";
+    /* PWA SERVICE WORKER AUTO-UPDATE NOTIFICATION */
+    const APP_VERSION = "2026.07.27.02";
 
     function _showSwUpdateToast(waitingWorker) {
       if (document.getElementById('sw-update-toast')) return;
@@ -739,9 +762,14 @@
       }
     }
 
-    /* === WEB AUDIO SFX SYNTHESIZER === */
+    /* === WEB AUDIO & SUNO STYLE BGM ENGINE === */
     class SoundFx {
-      constructor() { this.ctx = null; }
+      constructor() {
+        this.ctx = null;
+        this.bgmEnabled = true;
+        this.bgmInterval = null;
+        this.noteIndex = 0;
+      }
       init() {
         if (!this.ctx) {
           this.ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -813,10 +841,58 @@
         osc.connect(gain); gain.connect(this.ctx.destination);
         osc.start(); osc.stop(now + 0.4);
       }
+
+      /* Suno Retro Space Synth BGM Generator */
+      startSunoBGM() {
+        if (this.bgmInterval || !this.bgmEnabled) return;
+        this.init();
+
+        const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63]; // C3, D3, E3, G3, A3, C4
+        this.bgmInterval = setInterval(() => {
+          if (!this.bgmEnabled || !this.ctx) return;
+          const now = this.ctx.currentTime;
+          
+          // Bass Pulse
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          
+          const freq = notes[this.noteIndex % notes.length];
+          this.noteIndex++;
+
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(now + 0.22);
+        }, 240); // 125 BPM synth loop
+      }
+
+      stopSunoBGM() {
+        if (this.bgmInterval) {
+          clearInterval(this.bgmInterval);
+          this.bgmInterval = null;
+        }
+      }
     }
     const sfx = new SoundFx();
 
-    /* === ASTRONOMY KNOWLEDGE & EDUCATIONAL STRATEGY DATASET === */
+    function toggleBGM() {
+      sfx.bgmEnabled = !sfx.bgmEnabled;
+      const btn = document.getElementById('btn-toggle-bgm');
+      if (sfx.bgmEnabled) {
+        btn.innerText = '🎵 Suno BGM: 開';
+        sfx.startSunoBGM();
+      } else {
+        btn.innerText = '🔇 Suno BGM: 關';
+        sfx.stopSunoBGM();
+      }
+    }
+
+    /* ASTRONOMY KNOWLEDGE & EDUCATIONAL STRATEGY DATASET */
     const QUIZ_BANK = [
       {
         q: "太陽系中體積最大的行星是哪一顆？",
@@ -880,7 +956,7 @@
       }
     ];
 
-    /* === THREE.JS GAME ENGINE === */
+    /* THREE.JS GAME ENGINE */
     let scene, camera, renderer;
     let stars, starGeo, starCount = 1800;
     let asteroids = [];
@@ -903,7 +979,7 @@
     let quizCorrectCount = 0;
     let comboCount = 0;
     let lastFireTime = 0;
-    let lastOrbSpawnDist = 0;
+    let orbSpawnTimer = 0;
 
     const playerPos = { x: 0, y: 0 };
     const playerVel = { x: 0, y: 0 };
@@ -1024,7 +1100,7 @@
     }
 
     function createKnowledgeOrb() {
-      const geo = new THREE.OctahedronGeometry(1.5, 0);
+      const geo = new THREE.OctahedronGeometry(1.8, 0);
       const mat = new THREE.MeshPhongMaterial({
         color: 0xc084fc,
         emissive: 0xa855f7,
@@ -1040,12 +1116,12 @@
 
     function fireLaser() {
       const now = performance.now();
-      if (now - lastFireTime < 180) return;
+      if (now - lastFireTime < 160) return;
       lastFireTime = now;
 
       sfx.playLaser();
 
-      const geo = new THREE.CylinderGeometry(0.1, 0.1, 2.5, 6);
+      const geo = new THREE.CylinderGeometry(0.12, 0.12, 2.8, 6);
       geo.rotateX(Math.PI / 2);
       const mat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
       const laser = new THREE.Mesh(geo, mat);
@@ -1102,14 +1178,15 @@
 
     function spawnKnowledgeOrb() {
       const orb = createKnowledgeOrb();
-      orb.position.x = (Math.random() - 0.5) * 18;
-      orb.position.y = (Math.random() - 0.5) * 14;
-      orb.position.z = -180;
+      orb.position.x = (Math.random() - 0.5) * 16;
+      orb.position.y = (Math.random() - 0.5) * 12;
+      orb.position.z = -160;
       scene.add(orb);
       knowledgeOrbs.push(orb);
-      showWarningBanner("🌌 發現星際知識解題晶體！快靠近收集！");
+      showWarningBanner("🌌 發現星際解題晶體！靠近收集解題領獎！");
     }
 
+    /* 全平台操控相容事件 (Desktop Mouse Click + Keyboard + Touch) */
     function setupControls() {
       window.addEventListener('keydown', (e) => {
         if (!gameActive || isPausedForQuiz) return;
@@ -1132,6 +1209,7 @@
 
       const canvas = document.getElementById('game-canvas');
 
+      // 全屏觸控滑動
       canvas.addEventListener('touchstart', (e) => {
         if (!gameActive || isPausedForQuiz) return;
         sfx.init();
@@ -1156,21 +1234,34 @@
       canvas.addEventListener('touchend', endTouchDrag);
       canvas.addEventListener('touchcancel', endTouchDrag);
 
-      document.getElementById('btn-touch-fire').addEventListener('touchstart', (e) => {
-        e.preventDefault();
+      /* 電腦滑鼠點擊 + 手觸多平台綁定 */
+      const btnFire = document.getElementById('btn-touch-fire');
+      const handleFire = (e) => {
+        if (e) e.preventDefault();
         sfx.init();
         fireLaser();
-      });
+      };
+      btnFire.addEventListener('click', handleFire);
+      btnFire.addEventListener('touchstart', handleFire, { passive: false });
 
       const btnBoost = document.getElementById('btn-touch-boost');
-      btnBoost.addEventListener('touchstart', (e) => {
-        e.preventDefault();
+      const startBoost = (e) => {
+        if (e) e.preventDefault();
         sfx.init();
         keys.boost = true;
-      });
-      btnBoost.addEventListener('touchend', () => { keys.boost = false; });
+      };
+      const endBoost = (e) => {
+        if (e) e.preventDefault();
+        keys.boost = false;
+      };
+      btnBoost.addEventListener('mousedown', startBoost);
+      btnBoost.addEventListener('mouseup', endBoost);
+      btnBoost.addEventListener('mouseleave', endBoost);
+      btnBoost.addEventListener('touchstart', startBoost, { passive: false });
+      btnBoost.addEventListener('touchend', endBoost);
     }
 
+    /* GAME LOOP & UPDATES */
     let lastTime = 0;
     function gameLoop(timestamp) {
       requestAnimationFrame(gameLoop);
@@ -1185,6 +1276,13 @@
         updateParticles(delta);
         updateStars(delta);
         updateHUD();
+
+        // 頻率保障：每 10 秒必出一次解題晶體！
+        orbSpawnTimer += delta;
+        if (orbSpawnTimer >= 10.0) {
+          orbSpawnTimer = 0;
+          spawnKnowledgeOrb();
+        }
       }
 
       renderer.render(scene, camera);
@@ -1281,11 +1379,6 @@
         spawnAsteroid();
       }
 
-      if (distance - lastOrbSpawnDist > 300) {
-        lastOrbSpawnDist = distance;
-        spawnKnowledgeOrb();
-      }
-
       for (let i = asteroids.length - 1; i >= 0; i--) {
         const ast = asteroids[i];
         ast.position.z += currentSpeed * delta;
@@ -1325,7 +1418,7 @@
         orb.rotation.y += orb.rotationSpeed;
 
         const dist = Math.hypot(orb.position.x - playerPos.x, orb.position.y - playerPos.y);
-        if (orb.position.z > -3 && orb.position.z < 3 && dist < 3.0) {
+        if (orb.position.z > -4 && orb.position.z < 4 && dist < 3.8) {
           sfx.playCollect();
           scene.remove(orb);
           knowledgeOrbs.splice(i, 1);
@@ -1458,6 +1551,7 @@
 
     function startGame() {
       sfx.init();
+      sfx.startSunoBGM();
       document.getElementById('start-modal').classList.add('hidden');
       resetStats();
       gameActive = true;
@@ -1472,7 +1566,7 @@
       asteroidsDestroyedCount = 0;
       quizCorrectCount = 0;
       comboCount = 0;
-      lastOrbSpawnDist = 0;
+      orbSpawnTimer = 0;
       playerPos.x = 0;
       playerPos.y = 0;
       playerVel.x = 0;
@@ -1486,6 +1580,9 @@
       lasers = [];
       knowledgeOrbs = [];
       particles = [];
+      
+      // 開局首秒立刻送上一顆解題晶體，讓學霸或少兒組能立刻看到體驗！
+      spawnKnowledgeOrb();
     }
 
     function triggerGameOver(reason) {

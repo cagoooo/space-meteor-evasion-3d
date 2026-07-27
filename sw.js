@@ -1,5 +1,5 @@
 /* sw.js - PWA Service Worker with Version Gate & Cache Busting */
-const BUILD_VERSION = "2026.07.27.01";
+const BUILD_VERSION = "2026.07.27.02";
 const CACHE_NAME = `space-thunder-${BUILD_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -50,7 +50,6 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
-  // HTML Navigate: Network-First (確保拉取最新版 index.html)
   if (event.request.mode === 'navigate' || url.pathname.endsWith('.html')) {
     event.respondWith(
       fetch(event.request)
@@ -66,7 +65,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 靜態資源：Cache-First with Network Fallback
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
