@@ -108,7 +108,7 @@ Made with ❤️ by [阿凱老師](https://www.smes.tyc.edu.tw/modules/tadnews/p
 - Repository：`cagoooo/space-meteor-evasion-3d`
 - 可見性：公開
 - 主要技術：HTML
-- 線上入口：未在 GitHub repository metadata 設定
+- 線上入口：<https://cagoooo.github.io/space-meteor-evasion-3d/>
 
 ### 可以怎麼應用
 
