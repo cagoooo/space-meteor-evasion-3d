@@ -6,6 +6,8 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Deployed-00f0ff.svg)](https://cagoooo.github.io/space-meteor-evasion-3d/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+> 📌 **建置版本：2026.07.27**（依據 程式內版本常數）
+
 ---
 
 ## 🌐 線上即時體驗 (Live Demo)
