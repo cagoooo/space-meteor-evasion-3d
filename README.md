@@ -2,7 +2,7 @@
 
 > **第一人稱飛船駕駛 · 電腦鍵盤/滑鼠/手機觸控全響應 · 3D 隕石爆破碎塊物理 · 班級排行榜與 36 題跨學科學霸問答大冒險**
 
-[![Made with Love](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20by%20%E9%98%BF%E5%87%B1%E8%80%81%E5%B8%AB-ff4081.svg)](https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5)
+[![Made with Love](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20by%20%E9%98%BF%E5%87%B1%E8%80%81%E5%B8%AB-ff4081.svg)](https://www.smes.tyc.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=2&content_id=11&type=news&from_op=all_news#a5)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Deployed-00f0ff.svg)](https://cagoooo.github.io/space-meteor-evasion-3d/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -88,10 +88,10 @@ http://localhost:8000
 
 ## 👤 版權與作者資訊 (Author & Credit)
 
-Made with ❤️ by [阿凱老師](https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5)
+Made with ❤️ by [阿凱老師](https://www.smes.tyc.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=2&content_id=11&type=news&from_op=all_news#a5)
 
 - **作者**：石門國小 阿凱老師 (Akai)
-- **聯絡資訊 / 教師專頁**：[石門國小教師資訊頁](https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5)
+- **聯絡資訊 / 教師專頁**：[石門國小教師資訊頁](https://www.smes.tyc.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=2&content_id=11&type=news&from_op=all_news#a5)
 
 ---
 
