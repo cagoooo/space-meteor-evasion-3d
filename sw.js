@@ -1,5 +1,5 @@
 /* sw.js - PWA Service Worker with Version Gate & Cache Busting */
-const BUILD_VERSION = "2026.07.27.23";
+const BUILD_VERSION = "2026.11.17.1";
 const CACHE_NAME = `space-thunder-${BUILD_VERSION}`;
 
 const PRECACHE_ASSETS = [
